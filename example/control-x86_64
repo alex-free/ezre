@@ -1,0 +1,6 @@
+Package: hello-world
+Version: 1.0
+Maintainer: Alex Free
+Architecture: amd64
+Homepage: https://alex-free.github.io/ezre
+Description:  EzRe deb file example.
