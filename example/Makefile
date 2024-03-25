@@ -1,4 +1,4 @@
-# EzRe GNUMakefile for Linux/Windows by Alex Free
+# EzRe v1.0.1 GNUMakefile for Linux/Windows by Alex Free
 
 include variables.mk
 
@@ -14,8 +14,13 @@ endif
 
 .PHONY: deps-apt
 deps-apt:
-	sudo apt update --yes
+	sudo apt update
 	sudo apt install --yes $(BUILD_DEPENDS_APT)
+
+.PHONY: deps-dnf
+deps-dnf:
+	sudo dnf update
+	sudo dnf -y install  $(BUILD_DEPENDS_DNF)
 
 .PHONY: clean
 clean:
