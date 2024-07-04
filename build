@@ -3,10 +3,10 @@
 # EzRe build script
 
 set -e
-version="v1.0"
+version="v1.0.1"
 program="ezre"
 release_name="$program-$version"
-release_files="readme.md license.md control-i386 control-x86_64 variables.mk Makefile example"
+release_files="readme.md license.md changelog.md control-i386 control-x86_64 variables.mk Makefile example"
 
 cd "$(dirname "$0")"
 rm -rf "$release_name" "$release_name".zip

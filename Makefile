@@ -1,4 +1,4 @@
-# EzRe v1.0.1 GNUMakefile for Linux/Windows by Alex Free
+# EzRe GNUMakefile for Linux/Windows by Alex Free https://github.com/alex-free/ezre
 
 include variables.mk
 

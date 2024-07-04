@@ -1,4 +1,4 @@
-# Variables for EzRe Makefile
+# Variables of EzRe GNUMakefile for Linux/Windows by Alex Free https://github.com/alex-free/ezre
 
 # Basename of all release files (.zip, .deb)
 RELEASE_BASE_NAME=hello-world
@@ -19,7 +19,7 @@ LINUX_SPECIFIC_RELEASE_FILES=readme-linux.md
 WINDOWS_SPECIFIC_RELEASE_FILES=readme-windows.md
 
 # All dependencies required to build the software, to be installed when using deps-apt EzRe Makefile rule (For Debian/Ubuntu)
-BUILD_DEPENDS_APT=build-essential gcc-multilib mingw-w64-tools zip dpkg-dev
+BUILD_DEPENDS_APT=build-essential g++-multilib gcc-multilib mingw-w64-tools g++-mingw-w64code Makefile zip dpkg-dev
 # All dependencies required to build the software, to be installed when using deps-dnf EzRe Makefile rule (For Fedora/Red Hat)
 BUILD_DEPENDS_DNF=gcc g++ libstdc++-static.i686 glibc-static.i686 libstdc++-static.x86_64 mingw64-gcc mingw32-gcc mingw32-gcc-c++ mingw64-gcc-c++ zip
 
