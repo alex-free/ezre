@@ -1,0 +1,106 @@
+#!/bin/bash
+
+ezre_files="/usr/share/ezre"
+script_dir=$(dirname "$0")
+
+echo -e "EZRE template file installer by Alex Free\n"
+
+if [ ! -e "$ezre_files" ]; then
+
+    if [ ! -e "$script_dir/template-files" ]; then
+        echo "Error: Niether "\"$script_dir/template-files"\" or "\"$ezre_files"\" exist."
+        exit 1
+    else
+        ezre_files=""$script_dir"/template-files"
+    fi
+fi
+
+# Makefile
+
+if [ -e "Makefile" ]; then
+    echo "Info: "\"Makefile"\" already exists in the current working directory."
+    read -p "Overwrite "\"Makefile"\" with echo "\"$ezre_files/Makefile"\" ? " -n 1 -r
+    echo
+
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+        rm Makefile
+    fi
+
+    sleep 1 # Avoid accidentally confirming the next file since this happens so fast
+fi
+
+if [ ! -e "Makefile" ]; then
+    cp -v "$ezre_files"/Makefile Makefile
+fi
+
+# variables.mk
+
+if [ -e "variables.mk" ]; then
+    echo "Info: "\"variables.mk"\" already exists in the current working directory."
+    read -p "Overwrite "\"variables.mk"\" with echo "\"$ezre_files/variables.mk"\" ? " -n 1 -r
+    echo
+
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+        rm variables.mk
+    fi
+
+    sleep 1 # Avoid accidentally confirming the next file since this happens so fast
+fi
+
+if [ ! -e "variables.mk" ]; then
+    cp -v "$ezre_files"/variables.mk variables.mk
+fi
+
+# control-i386
+
+if [ -e "control-i386" ]; then
+    echo "Info: "\"control-i386"\" already exists in the current working directory."
+    read -p "Overwrite "\"control-i386"\" with echo "\"$ezre_files/control-i386"\" ? " -n 1 -r
+    echo
+
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+        rm control-i386
+    fi
+
+    sleep 1 # Avoid accidentally confirming the next file since this happens so fast
+fi
+
+if [ ! -e "control-i386" ]; then
+    cp -v "$ezre_files"/control-i386 control-i386
+fi
+
+# control-x86_64
+
+if [ -e "control-x86_64" ]; then
+    echo "Info: "\"control-x86_64"\" already exists in the current working directory."
+    read -p "Overwrite "\"control-x86_64"\" with echo "\"$ezre_files/control-x86_64"\" ? " -n 1 -r
+    echo
+
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+        rm control-x86_64
+    fi
+
+    sleep 1 # Avoid accidentally confirming the next file since this happens so fast
+fi
+
+if [ ! -e "control-x86_64" ]; then
+    cp -v "$ezre_files"/control-x86_64 control-x86_64
+fi
+
+# build.md
+
+if [ -e "build.md" ]; then
+    echo "Info: "\"build.md"\" already exists in the current working directory."
+    read -p "Overwrite "\"build.md"\" with echo "\"$ezre_files/build.md"\" ? " -n 1 -r
+    echo
+
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+        rm build.md
+    fi
+
+    sleep 1 # Avoid accidentally confirming the next file since this happens so fast
+fi
+
+if [ ! -e "build.md" ]; then
+    cp -v "$ezre_files"/build.md build.md
+fi

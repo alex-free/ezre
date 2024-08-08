@@ -1,0 +1,115 @@
+#!/bin/bash
+
+echo "EZRE template file downloader by Alex Free"
+
+if ! command -v curl &> /dev/null; then
+    echo "Info: curl command not found."
+
+    if command -v apt &> /dev/null; then
+        if [ "$EUID" != 0 ]; then
+            echo "Info: Root privilages are required to install curl with apt"
+            sudo apt install --yes curl
+        else
+            apt install --yes curl
+        fi
+    elif command -v dnf &> /dev/null; then
+        if [ "$EUID" != 0 ]; then
+            echo "Info: Root privilages are required to install curl with dnf"
+            sudo dnf install -y curl
+        else
+            dnf install -y curl
+        fi
+    else
+        echo "Error, unknown package manager. Please install curl and have it available in your "\"$\PATH"\"."
+        exit 1
+    fi
+fi
+
+# Makefile
+
+if [ -e "Makefile" ]; then
+    echo "Info: "\"Makefile"\" already exists in the current working directory."
+
+    read -p "Overwrite "\"Makefile"\" with https://raw.githubusercontent.com/alex-free/ezre/master/template-files/Makefile ? " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+        rm Makefile
+    fi
+
+    sleep 1 # Avoid accidentally confirming the next file since this happens so fast
+fi
+
+if [ ! -e "Makefile" ]; then
+    curl -O https://raw.githubusercontent.com/alex-free/ezre/master/template-files/Makefile
+fi
+
+# variables.mk
+
+if [ -e "variables.mk" ]; then
+    echo "Info: "\"variables.mk"\" already exists in the current working directory."
+    read -p "Overwrite "\"variables.mk"\" with https://raw.githubusercontent.com/alex-free/ezre/master/template-files/variables.mk ? " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+        rm variables.mk
+    fi
+    
+    sleep 1 # Avoid accidentally confirming the next file since this happens so fast
+fi
+
+if [ ! -e "variables.mk" ]; then
+    curl -O https://raw.githubusercontent.com/alex-free/ezre/master/template-files/variables.mk
+fi
+
+# control-i386
+
+if [ -e "control-i386" ]; then
+    echo "Info: "\"control-i386"\" already exists in the current working directory."
+    read -p "Overwrite "\"control-i386"\" with https://raw.githubusercontent.com/alex-free/ezre/master/template-files/control-i386 ? " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+        rm control-i386
+    fi
+
+    sleep 1 # Avoid accidentally confirming the next file since this happens so fast
+fi
+
+
+if [ ! -e "control-i386" ]; then
+    curl -O https://raw.githubusercontent.com/alex-free/ezre/master/template-files/control-i386
+fi
+
+# control-x86_64
+
+if [ -e "control-x86_64" ]; then
+    echo "Info: "\"control-x86_64"\" already exists in the current working directory."
+    read -p "Overwrite "\"control-x86_64"\" with https://raw.githubusercontent.com/alex-free/ezre/master/template-files/control-x86_64 ? " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+        rm control-i386
+    fi
+
+    sleep 1 # Avoid accidentally confirming the next file since this happens so fast
+fi
+
+
+if [ ! -e "control-x86_64" ]; then
+    curl -O https://raw.githubusercontent.com/alex-free/ezre/master/template-files/control-x86_64
+fi
+
+# build.md
+
+if [ -e "build.md" ]; then
+    echo "Info: "\"build.md"\" already exists in the current working directory."
+
+    read -p "Overwrite "\"build.md"\" with https://raw.githubusercontent.com/alex-free/ezre/master/template-files/build.md ? " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+        rm build.md
+    fi
+
+    sleep 1 # Avoid accidentally confirming the next file since this happens so fast
+fi
+
+if [ ! -e "build.md" ]; then
+    curl -O https://raw.githubusercontent.com/alex-free/ezre/master/template-files/build.md
+fi

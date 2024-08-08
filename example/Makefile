@@ -1,4 +1,4 @@
-# EzRe GNUMakefile for Linux/Windows by Alex Free https://github.com/alex-free/ezre
+# EzRe v1.0.2 GNUMakefile for Linux/Windows by Alex Free
 
 include variables.mk
 
@@ -6,10 +6,26 @@ COMPILER_FLAGS+=-DVERSION=\"$(VERSION)\"
 
 $(PROGRAM): clean
 	mkdir -p $(BUILD_DIR)
+
+# OPTIONAL, not default: Build C libraries to be used by the target executable. To enable this, you must replace `library-file*` with the actual name of the library, and you must set `BUILD_LIB=YES` in `variables.mk`.
+ifeq ("$(BUILD_LIB)","YES")
+	$(COMPILER) $(COMPILER_FLAGS_LIB) -c library-files-dir/library-file.c -o $(BUILD_DIR)/library-file-object.o
+	$(AR) rcs $(BUILD_DIR)/library-file-archive.a $(BUILD_DIR)/library-file-object.o
+
+ifeq ($(strip $(EXECUTABLE_NAME)),)
+	$(COMPILER) $(COMPILER_FLAGS) $(SOURCE_FILES) -L./$(BUILD_DIR) -llibrary-file -o $(BUILD_DIR)/$(PROGRAM)
+else
+	$(COMPILER) $(COMPILER_FLAGS) $(SOURCE_FILES) -L./$(BUILD_DIR) -llibrary-file -o $(BUILD_DIR)/$(EXECUTABLE_NAME)
+endif
+
+else # Default: Does not build any C libraries. `BUILD_LIB=NO` in `variables.mk`.
+	mkdir -p $(BUILD_DIR)
 ifeq ($(strip $(EXECUTABLE_NAME)),)
 	$(COMPILER) $(COMPILER_FLAGS) $(SOURCE_FILES) -o $(BUILD_DIR)/$(PROGRAM)
 else
 	$(COMPILER) $(COMPILER_FLAGS) $(SOURCE_FILES) -o $(BUILD_DIR)/$(EXECUTABLE_NAME)
+endif
+
 endif
 
 .PHONY: deps-apt
@@ -24,7 +40,7 @@ deps-dnf:
 
 .PHONY: clean
 clean:
-	rm -rf $(BUILD_DIR)/$(PROGRAM).exe $(BUILD_DIR)/$(PROGRAM)
+	rm -rf $(BUILD_DIR)/$(PROGRAM).exe $(BUILD_DIR)/$(PROGRAM) $(BUILD_DIR)/*.o $(BUILD_DIR)/*.a
 
 .PHONY: clean-build
 clean-build:
@@ -32,7 +48,7 @@ clean-build:
 
 .PHONY: linux-i386
 linux-i386: clean
-	make $(PROGRAM) COMPILER_FLAGS='$(COMPILER_FLAGS_LINUX_X86) $(COMPILER_FLAGS)' EXECUTABLE_NAME='$(PROGRAM).i386'
+	make $(PROGRAM) COMPILER_FLAGS='$(COMPILER_FLAGS_LINUX_X86) $(COMPILER_FLAGS)' COMPILER_FLAGS_LIB='$(COMPILER_FLAGS_LINUX_X86) $(COMPILER_FLAGS_LIB)' EXECUTABLE_NAME='$(PROGRAM).i386'
 
 .PHONY: linux-x86_64
 linux-x86_64: clean
@@ -40,11 +56,11 @@ linux-x86_64: clean
 
 .PHONY: windows-i686
 windows-i686: clean
-	make $(PROGRAM) COMPILER=$(WINDOWS_X86_COMPILER) EXECUTABLE_NAME='$(PROGRAM).i686.exe'
+	make $(PROGRAM) COMPILER=$(WINDOWS_I686_COMPILER) EXECUTABLE_NAME='$(PROGRAM).i686.exe' AR=$(WINDOWS_I686_AR)
 
 .PHONY: windows-x86_64
 windows-x86_64: clean
-	make $(PROGRAM) COMPILER=$(WINDOWS_X86_64_COMPILER) EXECUTABLE_NAME='$(PROGRAM).x86_64.exe'
+	make $(PROGRAM) COMPILER=$(WINDOWS_X86_64_COMPILER) EXECUTABLE_NAME='$(PROGRAM).x86_64.exe' AR=$(WINDOWS_X86_64_AR)
 
 .PHONY: release
 release:
