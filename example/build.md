@@ -1,9 +1,9 @@
 
 # Building From Source
 
-In the source directory, you may execute any of the following:
+This software is built with the [EZRE](https://github.com/alex-free/ezre) build system. In the source directory, you may execute any of the following:
 
-`make deps-apt` - installs the build dependencies required to compile the program.
+`make deps` - installs the build dependencies required to compile the program on Linux x86_64 Linux distributions with either the `dnf` or `apt` package manager.
 
 `make` - creates an executable for x86_64 Linux.
 
@@ -11,7 +11,7 @@ In the source directory, you may execute any of the following:
 
 `make clean-build` - deletes the generated build directory in it's entirety.
 
-`make all` - **generate all of the following:**
+`make all` - **generates all of the following:**
 
 ### For Windows 95 OSR 2.5 and above, Pentium CPU minimum (32 bit)
 
@@ -27,12 +27,14 @@ In the source directory, you may execute any of the following:
 
 *   Linux i386 static executable file.
 *   Portable Linux i386 release .zip file.
-*   Linux i386 release .deb file.
+*   Linux i386 release .deb file for Debian based Linux distributions.
+*   Linux i386 release .rpm file for Redhat based Linux distributions.
 
 ### For Linux 3.2.0 and above, x86_64 (64 bit)
 
 *   Linux x86_64 static executable file.
 *   Portable Linux x86_64 release .zip file.
-*   Linux x86_64 release .deb file.
+*   Linux x86_64 release .deb file for Debian based Linux distributions.
+*   Linux x86_64 release .rpm file for Redhat based Linux distributions.
 
 All output is found in the `build` directory created in the source directory.

@@ -1,16 +1,18 @@
 #!/bin/bash
 
 # EzRe build script
-version="v1.0.2"
+version="v1.0.3"
 program="ezre"
 release_name="$program-$version"
 release_files="readme.md license.md changelog.md template-files example ezre ezre-dl"
 
 cd "$(dirname "$0")"
-rm -rf "$release_name" "$release_name".zip "$release_name".deb
+
+version=v$version
+rm -rf "$release_name" "$release_name".zip "$release_name".deb *.rpm
+make -C example clean-build
 
 if [ "$1" == "clean" ]; then
-    make -C example clean-build
     exit 0
 fi
 
@@ -31,3 +33,12 @@ chmod -R 777 "$release_name"
 zip -r "$release_name".zip "$release_name"
 
 rm -rf "$release_name"/*
+
+rm -rf rpm-tmp
+mkdir -p rpm-tmp/RPMS rpm-tmp/SPECS rpm-tmp/SOURCES rpm-tmp/BUILD
+cp ezre-build.spec rpm-tmp/SPECS/ezre-build.spec
+cp ezre rpm-tmp/SOURCES/ezre
+cp -r template-files rpm-tmp/SOURCES/
+rpmbuild -bb --target noarch rpm-tmp/SPECS/ezre-build.spec --define "_topdir $PWD/rpm-tmp"
+mv rpm-tmp/RPMS/noarch/*.rpm .
+rm -rf rpm-tmp

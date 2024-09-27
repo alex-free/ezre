@@ -8,7 +8,7 @@ echo -e "EZRE template file installer by Alex Free\n"
 if [ ! -e "$ezre_files" ]; then
 
     if [ ! -e "$script_dir/template-files" ]; then
-        echo "Error: Niether "\"$script_dir/template-files"\" or "\"$ezre_files"\" exist."
+        echo "Error: Neither "\"$script_dir/template-files"\" or "\"$ezre_files"\" exist."
         exit 1
     else
         ezre_files=""$script_dir"/template-files"
@@ -19,7 +19,7 @@ fi
 
 if [ -e "Makefile" ]; then
     echo "Info: "\"Makefile"\" already exists in the current working directory."
-    read -p "Overwrite "\"Makefile"\" with echo "\"$ezre_files/Makefile"\" ? " -n 1 -r
+    read -p "Overwrite "\"Makefile"\" with "\"$ezre_files/Makefile"\" ? " -n 1 -r
     echo
 
     if [[ $REPLY =~ ^[Yy]$ ]]; then
@@ -37,7 +37,7 @@ fi
 
 if [ -e "variables.mk" ]; then
     echo "Info: "\"variables.mk"\" already exists in the current working directory."
-    read -p "Overwrite "\"variables.mk"\" with echo "\"$ezre_files/variables.mk"\" ? " -n 1 -r
+    read -p "Overwrite "\"variables.mk"\" with "\"$ezre_files/variables.mk"\" ? " -n 1 -r
     echo
 
     if [[ $REPLY =~ ^[Yy]$ ]]; then
@@ -55,7 +55,7 @@ fi
 
 if [ -e "control-i386" ]; then
     echo "Info: "\"control-i386"\" already exists in the current working directory."
-    read -p "Overwrite "\"control-i386"\" with echo "\"$ezre_files/control-i386"\" ? " -n 1 -r
+    read -p "Overwrite "\"control-i386"\" with "\"$ezre_files/control-i386"\" ? " -n 1 -r
     echo
 
     if [[ $REPLY =~ ^[Yy]$ ]]; then
@@ -73,7 +73,7 @@ fi
 
 if [ -e "control-x86_64" ]; then
     echo "Info: "\"control-x86_64"\" already exists in the current working directory."
-    read -p "Overwrite "\"control-x86_64"\" with echo "\"$ezre_files/control-x86_64"\" ? " -n 1 -r
+    read -p "Overwrite "\"control-x86_64"\" with "\"$ezre_files/control-x86_64"\" ? " -n 1 -r
     echo
 
     if [[ $REPLY =~ ^[Yy]$ ]]; then
@@ -87,11 +87,29 @@ if [ ! -e "control-x86_64" ]; then
     cp -v "$ezre_files"/control-x86_64 control-x86_64
 fi
 
+# ezre.spec
+
+if [ -e "ezre.spec" ]; then
+    echo "Info: "\"ezre.spec"\" already exists in the current working directory."
+    read -p "Overwrite "\"ezre.spec"\" with "\"$ezre_files/ezre.spec"\" ? " -n 1 -r
+    echo
+
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+        rm ezre.spec
+    fi
+
+    sleep 1 # Avoid accidentally confirming the next file since this happens so fast
+fi
+
+if [ ! -e "ezre.spec" ]; then
+    cp -v "$ezre_files"/ezre.spec ezre.spec
+fi
+
 # build.md
 
 if [ -e "build.md" ]; then
     echo "Info: "\"build.md"\" already exists in the current working directory."
-    read -p "Overwrite "\"build.md"\" with echo "\"$ezre_files/build.md"\" ? " -n 1 -r
+    read -p "Overwrite "\"build.md"\" with "\"$ezre_files/build.md"\" ? " -n 1 -r
     echo
 
     if [[ $REPLY =~ ^[Yy]$ ]]; then
@@ -104,3 +122,48 @@ fi
 if [ ! -e "build.md" ]; then
     cp -v "$ezre_files"/build.md build.md
 fi
+
+read -p "Enter Executable name (without .exe extension): " PROGRAM
+read -p "Enter source filenames (i.e *.c, *.cpp, hello.c): " SOURCE_FILES
+read -p "What is your release base name (i.e hello-world): " RELEASE_BASE_NAME
+read -p "Enter the version number (i.e, 1.0): " VERSION
+read -p "Enter the license of your software: " LICENSE
+read -p "Describe your software: " SOFTWARE_DESCRIPTION
+read -p "Enter the website your software can be found at: " URL
+read -p "Enter your name: " YOUR_NAME
+
+sed -i -E "
+    s|^PROGRAM=.*|PROGRAM=$PROGRAM|;
+    s|^SOURCE_FILES=.*|SOURCE_FILES=$SOURCE_FILES|;
+    s|^RELEASE_BASE_NAME=.*|RELEASE_BASE_NAME=$RELEASE_BASE_NAME|;
+    s|^VERSION=.*|VERSION=$VERSION|;
+" "variables.mk"
+
+# RPM
+sed -i -E "s|cp %\{_sourcedir\}/your_executable %\{buildroot\}/usr/bin/|cp %\{_sourcedir\}/$PROGRAM %\{buildroot\}/usr/bin/|" ezre.spec
+sed -i -E "s|/usr/bin/your_executable|/usr/bin/$PROGRAM|" ezre.spec
+sed -i -E "s|License:\s*NOASSERTION|License:        $LICENSE|" ezre.spec
+sed -i -E "s|Name:\s*your_program|Name:           $RELEASE_BASE_NAME|" ezre.spec
+sed -i -E "s|Summary:\s*Your description.|Summary:        $SOFTWARE_DESCRIPTION|" ezre.spec
+sed -i -E "/%description/{n; s|Your description\.|$SOFTWARE_DESCRIPTION|}" ezre.spec
+sed -i -E "s|Version:\s*1\.0|Version:        $VERSION|" ezre.spec
+sed -i -E "s|URL:\s*your_website|URL:            $URL|" ezre.spec
+sed -i -E "s|Packager:\s*your_name|Packager:       $YOUR_NAME|" ezre.spec
+
+# DEB
+sed -i -E "s|^Package:\s*your_program|Package: $RELEASE_BASE_NAME|" control-i386
+sed -i -E "s|^Package:\s*your_program|Package: $RELEASE_BASE_NAME|" control-x86_64
+
+sed -i -E "s|Description:\s*Your description.|Description: $SOFTWARE_DESCRIPTION|" control-i386
+sed -i -E "s|Description:\s*Your description.|Description: $SOFTWARE_DESCRIPTION|" control-x86_64
+
+sed -i -E "s|Version:\s*1\.0|Version: $VERSION|" control-i386
+sed -i -E "s|Version:\s*1\.0|Version: $VERSION|" control-x86_64
+
+sed -i -E "s|Homepage:\s*your_website|Homepage: $URL|" control-i386
+sed -i -E "s|Homepage:\s*your_website|Homepage: $URL|" control-x86_64
+
+sed -i -E "s|Maintainer:\s*your_name|Maintainer: $YOUR_NAME|" control-i386
+sed -i -E "s|Maintainer:\s*your_name|Maintainer: $YOUR_NAME|" control-x86_64
+
+echo "variables.mk has been updated."
