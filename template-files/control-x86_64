@@ -1,6 +1,6 @@
-Package: your_program
-Version: 1.0
-Maintainer: your_name
+Package:
+Version:
+Maintainer:
 Architecture: amd64
-Homepage: your_website
-Description: Your description.
+Homepage:
+Description:

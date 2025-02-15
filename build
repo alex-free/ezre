@@ -1,14 +1,14 @@
 #!/bin/bash
 
 # EzRe build script
-version="v1.0.3"
+version="v1.0.4"
 program="ezre"
 release_name="$program-$version"
-release_files="readme.md license.md changelog.md template-files example ezre ezre-dl"
+release_files="readme.md license.md changelog.md template-files example ezre"
 
 cd "$(dirname "$0")"
 
-version=v$version
+version=$version
 rm -rf "$release_name" "$release_name".zip "$release_name".deb *.rpm
 make -C example clean-build
 
@@ -20,7 +20,7 @@ mkdir -p "$release_name"/usr/bin
 mkdir -p "$release_name"/usr/share/ezre
 mkdir -p "$release_name"/DEBIAN
 cp control "$release_name"/DEBIAN
-cp -r ezre ezre-dl "$release_name"/usr/bin
+cp -r ezre "$release_name"/usr/bin
 cp template-files/* "$release_name"/usr/share/ezre
 dpkg-deb --build "$release_name"
 

@@ -1,11 +1,6 @@
-# EzRe v1.0.3 GNUMakefile for Linux/Windows by Alex Free https://github.com/alex-free/ezre
+# EzRe v1.0.4 GNUMakefile for Linux/Windows by Alex Free https://github.com/alex-free/ezre
 
 include variables.mk
-
-# Prepend v to version number (i.e. get v1.0 from 1.0).
-VERSION_WITH_V := v$(VERSION)
-
-COMPILER_FLAGS+=-DVERSION=\"$(VERSION)\"
 
 $(PROGRAM): clean
 
@@ -43,7 +38,15 @@ ifeq ($(strip $(WINDOWS_X86_64_RELEASE_NAME_SUFFIX)),)
 	$(error Error: The $$WINDOWS_X86_64_RELEASE_NAME_SUFFIX variable is not set in variables.mk but is required)
 endif
 
+ifeq ($(strip $(MAC_OS_RELEASE_NAME_SUFFIX)),)
+	$(error Error: The $$MAC_OS_RELEASE_NAME_SUFFIX variable is not set in variables.mk but is required)
+endif
+
 # Check dependencies.
+
+ifeq ($(strip $(BUILD_DEPENDS_MACPORTS)),)
+	$(error Error: The $$BUILD_DEPENDS_MACPORTS variable is not set in variables.mk but is required)
+endif
 
 ifeq ($(strip $(BUILD_DEPENDS_APT)),)
 	$(error Error: The $$BUILD_DEPENDS_APT variable is not set in variables.mk but is required)
@@ -71,10 +74,6 @@ ifeq ($(strip $(COMPILER)),)
 	$(error Error: The $$COMPILER variable is not set in variables.mk but is required)
 endif
 
-ifeq ($(strip $(LINUX_COMPILER)),)
-	$(error Error: The $$LINUX_COMPILER variable is not set in variables.mk but is required)
-endif
-
 ifeq ($(strip $(WINDOWS_I686_COMPILER)),)
 	$(error Error: The $$WINDOWS_I686_COMPILER variable is not set in variables.mk but is required)
 endif
@@ -99,10 +98,6 @@ ifeq ($(strip $(AR)),)
 	$(error Error: The $$AR variable is not set in variables.mk but is required)
 endif
 
-ifeq ($(strip $(LINUX_AR)),)
-	$(error Error: The $$LINUX_AR variable is not set in variables.mk but is required)
-endif
-
 ifeq ($(strip $(WINDOWS_I686_AR)),)
 	$(error Error: The $$WINDOWS_I686_AR variable is not set in variables.mk but is required)
 endif
@@ -115,10 +110,6 @@ endif
 
 ifeq ($(strip $(STRIP)),)
 	$(error Error: The $$STRIP variable is not set in variables.mk but is required)
-endif
-
-ifeq ($(strip $(LINUX_STRIP)),)
-	$(error Error: The $$LINUX_STRIP variable is not set in variables.mk but is required)
 endif
 
 ifeq ($(strip $(WINDOWS_I686_STRIP)),)
@@ -134,25 +125,69 @@ endif
 	mkdir -p $(BUILD_DIR)
 
 # OPTIONAL, not default: Build C libraries to be used by the target executable. To enable this, you must replace `library-file*` with the actual name of the library, and you must set `BUILD_LIB=YES` in `variables.mk`.
-ifeq ("$(BUILD_LIB)","YES")
+
+# Mac OS does not support static linking, so we remove the -static flag from $(COMPILER_FLAGS). We echo the command we are going to use since the if statement doesn't display it by itself cleanly. We only account for this when EXECUTABLE_NAME is not set to avoid doing that for mingw cross compiled builds.
+
+# If BUILD_LIB=YES. 	
+# If EXECUTABLE_NAME is provided
+# If Mac OS
+# else (BUILD_LIB=NO)
+# If EXECUTABLE_NAME is provided
+# If Mac OS
+# End
+
+ifeq ("$(BUILD_LIB)", "YES")
+	# Compile library file into object and then create the static library
 	$(COMPILER) $(COMPILER_FLAGS_LIB) -c library-files-dir/library-file.c -o $(BUILD_DIR)/library-file-object.o
 	$(AR) rcs $(BUILD_DIR)/library-file-archive.a $(BUILD_DIR)/library-file-object.o
 
 ifeq ($(strip $(EXECUTABLE_NAME)),)
-	$(COMPILER) $(COMPILER_FLAGS) $(SOURCE_FILES) -L./$(BUILD_DIR) -llibrary-file -o $(BUILD_DIR)/$(PROGRAM)
+
+	@if [ "$(shell uname)" = "Darwin" ] && [ "$(COMPILER)" != "$(WINDOWS_I686_COMPILER)" ] && [ "$(COMPILER)" != "$(WINDOWS_X86_64_COMPILER)" ]; then \
+		echo "$(COMPILER) $(COMPILER_FLAGS_MAC) $(SOURCE_FILES) -L./$(BUILD_DIR) -llibrary-file -o $(BUILD_DIR)/$(PROGRAM)"; \
+		$(COMPILER) $(COMPILER_FLAGS_MAC) $(SOURCE_FILES) -L./$(BUILD_DIR) -llibrary-file -o $(BUILD_DIR)/$(PROGRAM); \
+	else \
+		echo "$(COMPILER) $(COMPILER_FLAGS) $(SOURCE_FILES) -L./$(BUILD_DIR) -llibrary-file -o $(BUILD_DIR)/$(PROGRAM)"; \
+		$(COMPILER) $(COMPILER_FLAGS) $(SOURCE_FILES) -L./$(BUILD_DIR) -llibrary-file -o $(BUILD_DIR)/$(PROGRAM); \
+	fi
+
 	$(STRIP) $(BUILD_DIR)/$(PROGRAM)
 else
-	$(COMPILER) $(COMPILER_FLAGS) $(SOURCE_FILES) -L./$(BUILD_DIR) -llibrary-file -o $(BUILD_DIR)/$(EXECUTABLE_NAME)
+
+	@if [ "$(shell uname)" = "Darwin" ] && [ "$(COMPILER)" != "$(WINDOWS_I686_COMPILER)" ] && [ "$(COMPILER)" != "$(WINDOWS_X86_64_COMPILER)" ]; then \
+		echo "$(COMPILER) $(COMPILER_FLAGS_MAC) $(SOURCE_FILES) -L./$(BUILD_DIR) -llibrary-file -o $(BUILD_DIR)/$(EXECUTABLE_NAME)"; \
+		$(COMPILER) $(COMPILER_FLAGS_MAC) $(SOURCE_FILES) -L./$(BUILD_DIR) -llibrary-file -o $(BUILD_DIR)/$(EXECUTABLE_NAME); \
+	else \
+		echo "$(COMPILER) $(COMPILER_FLAGS) $(SOURCE_FILES) -L./$(BUILD_DIR) -llibrary-file -o $(BUILD_DIR)/$(EXECUTABLE_NAME)"; \
+		$(COMPILER) $(COMPILER_FLAGS) $(SOURCE_FILES) -L./$(BUILD_DIR) -llibrary-file -o $(BUILD_DIR)/$(EXECUTABLE_NAME); \
+	fi
+
 	$(STRIP) $(BUILD_DIR)/$(EXECUTABLE_NAME)
 endif
 
-else # Default: Does not build any C libraries. `BUILD_LIB=NO` in `variables.mk`.
+else
 
 ifeq ($(strip $(EXECUTABLE_NAME)),)
-	$(COMPILER) $(COMPILER_FLAGS) $(SOURCE_FILES) -o $(BUILD_DIR)/$(PROGRAM)
+
+	@if [ "$(shell uname)" = "Darwin" ] && [ "$(COMPILER)" != "$(WINDOWS_I686_COMPILER)" ] && [ "$(COMPILER)" != "$(WINDOWS_X86_64_COMPILER)" ]; then \
+		echo "$(COMPILER) $(COMPILER_FLAGS_MAC) $(SOURCE_FILES) -o $(BUILD_DIR)/$(PROGRAM)"; \
+		$(COMPILER) $(COMPILER_FLAGS_MAC) $(SOURCE_FILES) -o $(BUILD_DIR)/$(PROGRAM); \
+	else \
+		echo "$(COMPILER) $(COMPILER_FLAGS) $(SOURCE_FILES) -o $(BUILD_DIR)/$(PROGRAM)"; \
+		$(COMPILER) $(COMPILER_FLAGS) $(SOURCE_FILES) -o $(BUILD_DIR)/$(PROGRAM); \
+	fi
 	$(STRIP) $(BUILD_DIR)/$(PROGRAM)
+
 else
-	$(COMPILER) $(COMPILER_FLAGS) $(SOURCE_FILES) -o $(BUILD_DIR)/$(EXECUTABLE_NAME)
+
+	@if [ "$(shell uname)" = "Darwin" ] && [ "$(COMPILER)" != "$(WINDOWS_I686_COMPILER)" ] && [ "$(COMPILER)" != "$(WINDOWS_X86_64_COMPILER)" ]; then \
+		echo "$(COMPILER) $(COMPILER_FLAGS_MAC) $(SOURCE_FILES) -o $(BUILD_DIR)/$(EXECUTABLE_NAME)"; \
+		$(COMPILER) $(COMPILER_FLAGS_MAC) $(SOURCE_FILES) -o $(BUILD_DIR)/$(EXECUTABLE_NAME); \
+	else \
+		echo "$(COMPILER) $(COMPILER_FLAGS) $(SOURCE_FILES) -o $(BUILD_DIR)/$(EXECUTABLE_NAME)"; \
+		$(COMPILER) $(COMPILER_FLAGS) $(SOURCE_FILES) -o $(BUILD_DIR)/$(EXECUTABLE_NAME); \
+	fi
+
 	$(STRIP) $(BUILD_DIR)/$(EXECUTABLE_NAME)
 endif
 
@@ -160,16 +195,26 @@ endif
 
 .PHONY: deps
 deps:
-	@if command -v dnf > /dev/null; then \
-		echo "Using dnf"; \
-		sudo dnf update; \
-		sudo dnf -y install $(BUILD_DEPENDS_DNF); \
-	elif command -v apt > /dev/null; then \
-		echo "Using apt"; \
-		sudo apt update; \
-		sudo apt install --yes $(BUILD_DEPENDS_APT); \
-	else \
-		echo "Neither dnf nor apt package managers were found. The make deps rule requires one of these package managers to automatically install all required build dependencies."; \
+	echo "Info: root privileges are required to install build dependencies.";
+	@if [ "$(shell uname)" = "Darwin" ]; then \
+		echo "Mac OS detected."; \
+		if command -v port > /dev/null; then \
+			echo "Using MacPorts"; \
+			sudo port -N install $(BUILD_DEPENDS_MACPORTS); \
+		else \
+			echo "MacPorts is not installed"; \
+		fi; \
+	elif [ "$(shell uname)" = "Linux" ]; then \
+		echo "Linux detected."; \
+		if command -v dnf > /dev/null; then \
+			echo "Using dnf"; \
+			sudo dnf -y install $(BUILD_DEPENDS_DNF); \
+		elif command -v apt > /dev/null; then \
+			echo "Using apt"; \
+			sudo apt install --yes $(BUILD_DEPENDS_APT); \
+		else \
+			echo "MacPorts, DNF, and APT package managers were not found. The make deps rule requires one of these package managers to automatically install all required build dependencies."; \
+		fi; \
 	fi
 
 .PHONY: clean
@@ -195,6 +240,10 @@ windows-i686: clean
 .PHONY: windows-x86_64
 windows-x86_64: clean
 	make $(PROGRAM) COMPILER=$(WINDOWS_X86_64_COMPILER) EXECUTABLE_NAME='$(PROGRAM).x86_64.exe' AR=$(WINDOWS_X86_64_AR) STRIP=$(WINDOWS_X86_64_STRIP)
+
+.PHONY: mac-os
+mac-os: clean
+	make $(PROGRAM) EXECUTABLE_NAME='$(PROGRAM).$(shell uname -m)'
 
 .PHONY: release
 release:
@@ -241,6 +290,14 @@ ifeq ($(strip $(WINDOWS_SPECIFIC_RELEASE_FILES)),)
 	make release PLATFORM='$(WINDOWS_X86_64_RELEASE_NAME_SUFFIX)' EXECUTABLE_NAME='$(PROGRAM).x86_64.exe' WINDOWS_RELEASE=true
 else
 	make release PLATFORM='$(WINDOWS_X86_64_RELEASE_NAME_SUFFIX)' RELEASE_FILES='$(WINDOWS_SPECIFIC_RELEASE_FILES) $(RELEASE_FILES)' EXECUTABLE_NAME='$(PROGRAM).x86_64.exe' WINDOWS_RELEASE=true
+endif
+
+.PHONY: mac-os-release
+mac-os-release: mac-os
+ifeq ($(strip $(MAC_OS_SPECIFIC_RELEASE_FILES)),)
+	make release PLATFORM='$(MAC_OS_RELEASE_NAME_SUFFIX)' EXECUTABLE_NAME='$(PROGRAM).$(shell uname -m)'
+else
+	make release PLATFORM='$(MAC_OS_RELEASE_NAME_SUFFIX)' RELEASE_FILES='$(MAC_OS_SPECIFIC_RELEASE_FILES) $(RELEASE_FILES)' EXECUTABLE_NAME='$(PROGRAM).mac-os'
 endif
 
 .PHONY: linux-i386-deb
@@ -291,15 +348,18 @@ linux-x86_64-rpm: linux-x86_64
 all:
 	make clean-build
 	
-	make linux-i386-release 
-	make linux-i386-deb EXECUTABLE_NAME='$(PROGRAM).i386'
-	make linux-i386-rpm EXECUTABLE_NAME='$(PROGRAM).i386'
-
-	make linux-x86_64-release 
-	make linux-x86_64-deb EXECUTABLE_NAME='$(PROGRAM).x86_64'
-	make linux-x86_64-rpm EXECUTABLE_NAME='$(PROGRAM).x86_64'
-
-	make windows-i686-release 
+	@if [ "$(shell uname)" = "Linux" ]; then \
+		make linux-i386-release; \
+		make linux-i386-deb EXECUTABLE_NAME='$(PROGRAM).i386'; \
+		make linux-i386-rpm EXECUTABLE_NAME='$(PROGRAM).i386'; \
+		make linux-x86_64-release; \
+		make linux-x86_64-deb EXECUTABLE_NAME='$(PROGRAM).x86_64'; \
+		make linux-x86_64-rpm EXECUTABLE_NAME='$(PROGRAM).x86_64'; \
+	elif [ "$(shell uname)" = "Darwin" ]; then \
+		make mac-os-release; \
+	fi
+	
+	make windows-i686-release
 	make windows-x86_64-release
 	
 	make clean

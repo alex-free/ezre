@@ -3,4 +3,4 @@ Version: 1.0
 Maintainer: Alex Free
 Architecture: amd64
 Homepage: https://github.com/alex-free/ezre
-Description: EzRe hello world example.
+Description: Hello world example using EzRe.
