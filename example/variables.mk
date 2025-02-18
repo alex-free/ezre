@@ -6,7 +6,7 @@ PROGRAM=hello
 SOURCE_FILES=hello.c
 # REQUIRED: Basename of all release files (.zip, .deb). I.e. hello-world.
 RELEASE_BASE_NAME=hello-world
-# REQUIRED: Version number, passed as 'VERSION' string to $(SOURCE_FILES). I.e. v1.0.
+# REQUIRED: Version number, passed as 'VERSION' string to $(SOURCE_FILES). I.e. 1.0.
 VERSION=1.0
 
 # OPTIONAL: additional files included in all portable zip releases. I.e. readme.md.
@@ -52,9 +52,9 @@ WINDOWS_I686_STRIP=i686-w64-mingw32-strip
 # REQUIRED: Windows x86_64 strip command (for building libraries with EZRE used by the target program).
 WINDOWS_X86_64_STRIP=x86_64-w64-mingw32-strip
 
-# REQUIRED: compiler flags used to compile $(SOURCE_FILES). To make a C/C++ program portable, you probably at least want `-static` as shown below. I like using `-Wall -Wextra -Werror -pedantic -static` or some variation. We can't use `-static` on Mac OS though.  -DVERSION=\"$(VERSION)\" is what provides the VERSION define in the C source code being compiled.
-COMPILER_FLAGS_MAC=-Wall -Wextra -Werror -pedantic -DVERSION="$(VERSION)"
-COMPILER_FLAGS=-Wall -Wextra -Werror -pedantic -static -DVERSION="$(VERSION)"
+# REQUIRED: compiler flags used to compile $(SOURCE_FILES). To make a C/C++ program portable, you probably at least want `-static` as shown below. I like using `-Wall -Wextra -Werror -pedantic -static` or some variation. We can't use `-static` on Mac OS though.
+COMPILER_FLAGS_MAC=-Wall -Wextra -Werror -pedantic
+COMPILER_FLAGS=-Wall -Wextra -Werror -pedantic -static
 # REQUIRED: compiler flag appended to $(COMPILER_FLAGS) to compile $(SOURCE_FILES) for Linux x86 builds. This tells GCC to build i386 code on an x86_64 system.
 COMPILER_FLAGS_LINUX_I386=-m32
 

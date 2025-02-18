@@ -1,4 +1,4 @@
-# EzRe GNUMakefile Variables for Linux/Windows. See https://github.com/alex-free/ezre for more info.
+# EzRe GNUMakefile Variables
 
 # REQUIRED: executable name in release (.exe file extension is appended for Windows builds). I.e. hello.
 PROGRAM=
@@ -6,7 +6,7 @@ PROGRAM=
 SOURCE_FILES=
 # REQUIRED: Basename of all release files (.zip, .deb). I.e. hello-world.
 RELEASE_BASE_NAME=
-# REQUIRED: Version number, passed as 'VERSION' string to $(SOURCE_FILES). I.e. v1.0.
+# REQUIRED: Version number, passed as 'VERSION' string to $(SOURCE_FILES). I.e. 1.0.
 VERSION=
 
 # OPTIONAL: additional files included in all portable zip releases. I.e. readme.md.
@@ -52,7 +52,7 @@ WINDOWS_I686_STRIP=i686-w64-mingw32-strip
 # REQUIRED: Windows x86_64 strip command (for building libraries with EZRE used by the target program).
 WINDOWS_X86_64_STRIP=x86_64-w64-mingw32-strip
 
-# REQUIRED: compiler flags used to compile $(SOURCE_FILES). To make a C/C++ program portable, you probably at least want `-static` as shown below. I like using `-Wall -Wextra -Werror -pedantic -static` or some variation. We can't use `-static` on Mac OS though.  -DVERSION=\"$(VERSION)\" is what provides the VERSION define in the C source code being compiled.
+# REQUIRED: compiler flags used to compile $(SOURCE_FILES). To make a C/C++ program portable, you probably at least want `-static` as shown below. I like using `-Wall -Wextra -Werror -pedantic -static` or some variation. We can't use `-static` on Mac OS though.
 COMPILER_FLAGS_MAC=
 COMPILER_FLAGS=
 # REQUIRED: compiler flag appended to $(COMPILER_FLAGS) to compile $(SOURCE_FILES) for Linux x86 builds. This tells GCC to build i386 code on an x86_64 system.

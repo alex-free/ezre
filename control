@@ -1,6 +1,6 @@
 Package: ezre
-Version: 1.0.4
+Version: 1.0.5
 Maintainer: Alex Free
 Architecture: all
 Homepage: https://github.com/alex-free/ezre
-Description: A simple and sane build system for Linux (i386 and x86_64) and Windows (i686 and x86_64) targets.
+Description: A simple and sane build system for Linux (i386 and x86_64), Mac OS (PowerPC/Intel/ARM) and Windows (i686 and x86_64) targets.

@@ -1,5 +1,5 @@
 Name:           ezre
-Version:        1.0.4
+Version:        1.0.5
 Summary:        A simple and sane build system for Linux (i386 and x86_64) and Windows (i686 and x86_64) targets.
 Release:        1
 License:        3-BSD
@@ -7,7 +7,7 @@ URL:            https://github.com/alex-free/ezre
 Packager:       Alex Free
 
 %description
-A simple and sane build system for Linux (i386 and x86_64) and Windows (i686 and x86_64) targets.
+A simple and sane build system for Linux (i386 and x86_64), Mac OS (PowerPC/Intel/ARM) and Windows (i686 and x86_64) targets.
 
 %install
 mkdir -p %{buildroot}/usr/bin
