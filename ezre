@@ -4,7 +4,7 @@ script_dir=$(dirname "$0")
 ezre_files=""$script_dir"/template-files"
 answered_yes=false
 
-echo -e "EzRe v1.0.5\n(c) 2023-2025, Alex Free (3-BSD)\n"
+echo -e "EzRe v1.0.6\n(c) 2023-2025, Alex Free (3-BSD)\n"
 
 if [ ! -e "$ezre_files" ]; then
 
@@ -297,15 +297,17 @@ else
 fi
 
 sed "$sed_args" "s|^PROGRAM=.*|PROGRAM=$PROGRAM|" variables.mk
-sed "$sed_args" "s|^SOURCE_FILES=.*|SOURCE_FILES=$SOURCE_FILES|" variables.mk
-sed "$sed_args" "s|^RELEASE_BASE_NAME=.*|RELEASE_BASE_NAME=$RELEASE_BASE_NAME|" variables.mk
 sed "$sed_args" "s|^VERSION=.*|VERSION=$VERSION|" variables.mk
+sed "$sed_args" "s|^RELEASE_BASE_NAME=.*|RELEASE_BASE_NAME=$RELEASE_BASE_NAME|" variables.mk
+sed "$sed_args" "s|^RELEASE_FILES=.*|RELEASE_FILES=$RELEASE_FILES|" variables.mk
 sed "$sed_args" "s|^BUILD_DEPENDS_APT=.*|BUILD_DEPENDS_APT=$APT_DEPS|" variables.mk
 sed "$sed_args" "s|^BUILD_DEPENDS_DNF=.*|BUILD_DEPENDS_DNF=$DNF_DEPS|" variables.mk
 sed "$sed_args" "s|^BUILD_DEPENDS_MACPORTS=.*|BUILD_DEPENDS_MACPORTS=$MACPORTS_DEPS|" variables.mk
 sed "$sed_args" "s|^COMPILER=.*|COMPILER=$COMPILER|" variables.mk
 sed "$sed_args" "s|^COMPILER_FLAGS_MAC=.*|COMPILER_FLAGS_MAC=$COMPILER_FLAGS_MAC|" variables.mk
 sed "$sed_args" "s|^COMPILER_FLAGS=.*|COMPILER_FLAGS=$COMPILER_FLAGS|" variables.mk
+sed "$sed_args" "s|^SOURCE_FILES=.*|SOURCE_FILES=$SOURCE_FILES|" variables.mk
+
 
 # RPM
 sed "$sed_args" "s|your_executable|$PROGRAM|" ezre.spec
