@@ -1,4 +1,4 @@
-# EzRe GNUMakefile Variables for Linux/Windows. See https://github.com/alex-free/ezre for more info.
+# EzRe GNUMakefile Variables
 
 # REQUIRED: executable name in release (.exe file extension is appended for Windows builds). I.e. hello.
 PROGRAM=hello
@@ -10,7 +10,7 @@ RELEASE_BASE_NAME=hello-world
 VERSION=1.0
 
 # OPTIONAL: additional files included in all portable zip releases. I.e. readme.md.
-RELEASE_FILES=
+RELEASE_FILES=*.md
 # OPTIONAL: files included only in the Linux portable releases (.zip).
 LINUX_SPECIFIC_RELEASE_FILES=
 # OPTIONAL: files included only in the Windows portable releases (.zip).

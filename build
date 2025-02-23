@@ -1,9 +1,9 @@
 #!/bin/bash
 
 # EzRe build script
-version="v1.0.5"
+version="1.0.6"
 program="ezre"
-release_name="$program-$version"
+release_name="$program-v$version"
 release_files="readme.md license.md changelog.md template-files example ezre"
 
 cd "$(dirname "$0")"
@@ -15,6 +15,17 @@ make -C example clean-build
 if [ "$1" == "clean" ]; then
     exit 0
 fi
+
+if sed --version >/dev/null 2>&1; then
+    echo "Info: using GNU sed"
+    sed_args="-i"
+else
+    echo "Info: using BSD sed"
+    sed_args="-i '' -E"
+fi
+
+sed "$sed_args" "s|^VERSION=.*|VERSION=$version|" control
+sed "$sed_args" "s|Version:.*|Version: $version|" ezre.spec
 
 mkdir -p "$release_name"/usr/bin
 mkdir -p "$release_name"/usr/share/ezre
@@ -36,9 +47,9 @@ rm -rf "$release_name"/*
 
 rm -rf rpm-tmp
 mkdir -p rpm-tmp/RPMS rpm-tmp/SPECS rpm-tmp/SOURCES rpm-tmp/BUILD
-cp ezre-build.spec rpm-tmp/SPECS/ezre-build.spec
+cp ezre.spec rpm-tmp/SPECS/ezre.spec
 cp ezre rpm-tmp/SOURCES/ezre
 cp -r template-files rpm-tmp/SOURCES/
-rpmbuild -bb --target noarch rpm-tmp/SPECS/ezre-build.spec --define "_topdir $PWD/rpm-tmp"
+rpmbuild -bb --target noarch rpm-tmp/SPECS/ezre.spec --define "_topdir $PWD/rpm-tmp"
 mv rpm-tmp/RPMS/noarch/*.rpm .
 rm -rf rpm-tmp
