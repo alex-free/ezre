@@ -1,5 +1,5 @@
 Name: ezre
-Version: 1.0.6
+Version: 1.0.7
 Summary: A simple and sane build system for Linux (i386 and x86_64) and Windows (i686 and x86_64) targets.
 Release: 1
 License: 3-BSD

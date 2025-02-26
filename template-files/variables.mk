@@ -6,7 +6,7 @@ PROGRAM=
 SOURCE_FILES=
 # REQUIRED: Basename of all release files (.zip, .deb). I.e. hello-world.
 RELEASE_BASE_NAME=
-# REQUIRED: Version number, passed as 'VERSION' string to $(SOURCE_FILES). I.e. 1.0.
+# REQUIRED: Version number, passed as 'VERSION' string to $(SOURCE_FILES). I.e. 1.0. Prepended with a v.
 VERSION=
 
 # OPTIONAL: additional files included in all portable zip releases. I.e. readme.md.

@@ -4,7 +4,7 @@ script_dir=$(dirname "$0")
 ezre_files=""$script_dir"/template-files"
 answered_yes=false
 
-echo -e "EzRe v1.0.6\n(c) 2023-2025, Alex Free (3-BSD)\n"
+echo -e "EzRe v1.0.7\n(c) 2023-2025, Alex Free (3-BSD)\n"
 
 if [ ! -e "$ezre_files" ]; then
 
