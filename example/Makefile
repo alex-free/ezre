@@ -60,6 +60,48 @@ ifeq ($(strip $(STRIP_MAC_LEGACY)),)
 	STRIP_MAC := $(STRIP_MAC)
 endif
 
+# Go through all optional scripts, if any are not empty enable them for target compilation. If they are not enabled we simply set a "echo script not enabled" command to each disabled target script to prevent syntax errors with GNUMake from an unset variable. User never actually sees that!
+
+SHELL_SCRIPT_HOST_ENABLE := FALSE
+
+ifneq ($(strip $(SHELL_SCRIPT_HOST)),)
+	SHELL_SCRIPT_HOST_ENABLE := TRUE
+else
+	SHELL_SCRIPT_HOST := "echo script not enabled"
+endif
+
+SHELL_SCRIPT_MAC_ENABLE := FALSE
+
+ifneq ($(strip $(SHELL_SCRIPT_MAC)),)
+	SHELL_SCRIPT_MAC_ENABLE := TRUE
+else
+	SHELL_SCRIPT_MAC := "echo script not enabled"
+endif
+
+SHELL_SCRIPT_MAC_LEGACY_ENABLE := FALSE
+
+ifneq ($(strip $(SHELL_SCRIPT_MAC_LEGACY)),)
+	SHELL_SCRIPT_MAC_LEGACY_ENABLE := TRUE
+else
+	SHELL_SCRIPT_MAC_LEGACY := "echo script not enabled"
+endif
+
+SHELL_SCRIPT_WINDOWS_I686_ENABLE := FALSE
+
+ifneq ($(strip $(SHELL_SCRIPT_WINDOWS_I686)),)
+	SHELL_SCRIPT_WINDOWS_I686_ENABLE := TRUE
+else
+	SHELL_SCRIPT_WINDOWS_I686 := "echo script not enabled"
+endif
+
+SHELL_SCRIPT_WINDOWS_X86_64_ENABLE := FALSE
+
+ifneq ($(strip $(SHELL_SCRIPT_WINDOWS_X86_64)),)
+	SHELL_SCRIPT_WINDOWS_X86_64_ENABLE := TRUE
+else
+	SHELL_SCRIPT_WINDOWS_X86_64 := "echo script not enabled"
+endif
+
 # if you specify like make LEGACY=TRUE or make mac-os-release LEGACY=TRUE then you can get alternative COMPILER, CFLAGS, LDFLAGS, and STRIP values (very useful for i.e. PowerPC). If nothing is set set it to false.
 ifndef LEGACY
 override LEGACY=FALSE
@@ -161,6 +203,18 @@ endif
 
 $(PROGRAM): clean
 	mkdir -p $(BUILD_DIR)
+
+	@if [ "$(shell uname)" = "Darwin" ] && [ "$(COMPILER)" != "$(COMPILER_WINDOWS_I686)" ] && [ "$(COMPILER)" != "$(COMPILER_WINDOWS_X86_64)" ] && [ "$(LEGACY)" = "FALSE" ] && [ "$(SHELL_SCRIPT_MAC_ENABLE)" = "TRUE" ]; then \
+		$(SHELL_SCRIPT_MAC); \
+	elif [ "$(shell uname)" = "Darwin" ] && [ "$(COMPILER)" != "$(COMPILER_WINDOWS_I686)" ] && [ "$(COMPILER)" != "$(COMPILER_WINDOWS_X86_64)" ] && [ "$(LEGACY)" = "TRUE" ] && [ "$(SHELL_SCRIPT_MAC_LEGACY_ENABLE)" = "TRUE" ]; then \
+		$(SHELL_SCRIPT_MAC_LEGACY); \
+	elif [ "$(COMPILER)" == "$(COMPILER_WINDOWS_I686)" ] && [ "$(SHELL_SCRIPT_WINDOWS_I686_ENABLE)" = "TRUE" ]; then \
+		$(SHELL_SCRIPT_WINDOWS_I686); \
+	elif [ "$(COMPILER)" == "$(COMPILER_WINDOWS_X86_64)" ] && [ "$(SHELL_SCRIPT_WINDOWS_X86_64_ENABLE)" = "TRUE" ]; then \
+		$(SHELL_SCRIPT_WINDOWS_X86_64); \
+	elif [ "$(SHELL_SCRIPT_HOST_ENABLE)" = "TRUE" ]; then \
+		$(SHELL_SCRIPT_HOST); \
+	fi
 
 	@if [ "$(shell uname)" = "Darwin" ] && [ "$(COMPILER)" != "$(COMPILER_WINDOWS_I686)" ] && [ "$(COMPILER)" != "$(COMPILER_WINDOWS_X86_64)" ] && [ "$(LEGACY)" = "FALSE" ]; then \
 		echo "$(COMPILER_MAC) "$(COMPILER_FLAGS_MAC)" $(SOURCE_FILES) "$(LDFLAGS_MAC)" -o $(BUILD_DIR)/$(EXECUTABLE_NAME)"; \
