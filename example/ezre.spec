@@ -1,13 +1,13 @@
 Name: hello-world       
-Version: 1.0
-Summary: Hello world example using EzRe.
+Version: v1.0
+Summary: Hello world example for EzRe.
 Release: 1
 License: NOASSERTION
 URL: https://github.com/alex-free/ezre       
 Packager: Alex Free
 
 %description
-Hello world example using EzRe.
+Hello world example for EzRe.
 
 %install
 mkdir -p %{buildroot}/usr/bin

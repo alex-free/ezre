@@ -3,8 +3,9 @@
 script_dir=$(dirname "$0")
 ezre_files=""$script_dir"/template-files"
 answered_yes=false
+version=1.0.8
 
-echo -e "EzRe v1.0.7\n(c) 2023-2025, Alex Free (3-BSD)\n"
+echo -e "EzRe v"$version"\n(C) 2023-2025, Alex Free (3-BSD)\n"
 
 if [ ! -e "$ezre_files" ]; then
 
@@ -16,11 +17,13 @@ if [ ! -e "$ezre_files" ]; then
     fi
 fi
 
+echo "Info: Ezre template files directory: "$ezre_files""
+
 if sed --version >/dev/null 2>&1; then
-    echo "Info: using GNU sed"
+    echo "Info: using GNU sed."
     sed_args="-i"
 else
-    echo "Info: using BSD sed"
+    echo "Info: using BSD sed."
     sed_args="-i '' -E"
 fi
 
@@ -37,304 +40,141 @@ if [ "$#" -eq 2 ] && [ "$1" == "-u" ]; then
     fi
 
     if [ -f "ezre.spec" ]; then
-        sed "$sed_args" "s|Version:.*|Version: $VERSION|" ezre.spec
+        # Add v for naming convention.
+        sed "$sed_args" "s|Version:.*|Version: v$VERSION|" ezre.spec
         echo "ezre.spec has been updated"
     fi
 
     exit 0
 
+elif [ "$#" -eq 1 ] && [ "$1" == "-u" ]; then
+        echo "Error: you must provide 2 arguments to update the version number."
+        exit 1
 elif [ "$#" -eq 1 ] && [ "$1" == "-y" ]; then
         answered_yes=true
 fi
 
 if [ "$answered_yes" = false ]; then
-    echo "Info: to avoid prompts to overwrite existing files, specify -y in the future"    
+    echo -e "Info: to avoid prompts to overwrite existing files, specify -y in the future."    
 fi
 
-# Makefile
-if [ -e "Makefile" ]; then
-    echo "Info: \"Makefile\" already exists in the current working directory."
-    if [ "$answered_yes" = true ]; then
-        rm Makefile
-    else
-        read -p "Overwrite \"Makefile\" with \"$ezre_files/Makefile\"? (Y/n) " -n 1 -r
-        echo
+overwrite_file_with_prompt() {
+    file="$1"
 
-        if [[ $REPLY =~ ^[Yy]$ ]]; then
-            rm Makefile
+    if [ -e "$file" ]; then
+        echo -e "\nInfo: \"$file\" already exists in the current working directory."
+
+        if [ "$answered_yes" = "false" ]; then
+            read -p "Overwrite \"$file\" with \"$ezre_files/$file\"? (Y/n) " -n 1 -r
+            echo
         fi
-
-        sleep 1
     fi
-fi
 
-if [ ! -e "Makefile" ]; then
-    cp -v "$ezre_files"/Makefile Makefile
-fi
+    if [[ $REPLY =~ ^[Yy]$ ]] || [ "$answered_yes" = "true" ] || [ ! -e "$file" ]; then
+        cp -v "$ezre_files/$file" .
+    fi
+}
+
+# Example usage
+overwrite_file_with_prompt "Makefile"
+overwrite_file_with_prompt "build.md"
+overwrite_file_with_prompt "control-i386"
+overwrite_file_with_prompt "control-x86_64"
+overwrite_file_with_prompt "ezre.spec"
 
 # variables.mk
 if [ -e "variables.mk" ]; then
-    echo "Info: \"variables.mk\" already exists in the current working directory."
-    if [ "$answered_yes" = true ]; then
-        rm variables.mk
-    else
-        read -p "Overwrite \"variables.mk\" with \"$ezre_files/variables.mk\"? (Y/n) " -n 1 -r
-        echo
-
-        if [[ $REPLY =~ ^[Yy]$ ]]; then
-            rm variables.mk
-        fi
-
-        sleep 1
-    fi
-fi
-
-if [ ! -e "variables.mk" ]; then
-    cp -v "$ezre_files"/variables.mk variables.mk
-fi
-
-# build.md
-if [ -e "build.md" ]; then
-    echo "Info: \"build.md\" already exists in the current working directory."
-    if [ "$answered_yes" = true ]; then
-        rm build.md
-    else
-        read -p "Overwrite \"build.md\" with \"$ezre_files/build.md\"? (Y/n) " -n 1 -r
-        echo
-
-        if [[ $REPLY =~ ^[Yy]$ ]]; then
-            rm build.md
-        fi
-
-        sleep 1
-    fi
-fi
-
-if [ ! -e "build.md" ]; then
-    cp -v "$ezre_files"/build.md build.md
-fi
-
-# control-i386
-if [ -e "control-i386" ]; then
-    echo "Info: \"control-i386\" already exists in the current working directory."
-    if [ "$answered_yes" = true ]; then
-        rm control-i386
-    else
-        read -p "Overwrite \"control-i386\" with \"$ezre_files/control-i386\"? (Y/n) " -n 1 -r
-        echo
-
-        if [[ $REPLY =~ ^[Yy]$ ]]; then
-            rm control-i386
-        fi
-
-        sleep 1
-    fi
-fi
-
-if [ ! -e "control-i386" ]; then
-    cp -v "$ezre_files"/control-i386 control-i386
-fi
-
-# control-x86_64
-if [ -e "control-x86_64" ]; then
-    echo "Info: \"control-x86_64\" already exists in the current working directory."
-    if [ "$answered_yes" = true ]; then
-        rm control-x86_64
-    else
-        read -p "Overwrite \"control-x86_64\" with \"$ezre_files/control-x86_64\"? (Y/n) " -n 1 -r
-        echo
-
-        if [[ $REPLY =~ ^[Yy]$ ]]; then
-            rm control-x86_64
-        fi
-
-        sleep 1
-    fi
-fi
-
-if [ ! -e "control-x86_64" ]; then
-    cp -v "$ezre_files"/control-x86_64 control-x86_64
-fi
-
-# ezre.spec
-if [ -e "ezre.spec" ]; then
-    echo "Info: \"ezre.spec\" already exists in the current working directory."
-    if [ "$answered_yes" = true ]; then
-        rm ezre.spec
-    else
-        read -p "Overwrite \"ezre.spec\" with \"$ezre_files/ezre.spec\"? (Y/n) " -n 1 -r
-        echo
-
-        if [[ $REPLY =~ ^[Yy]$ ]]; then
-            rm ezre.spec
-        fi
-
-        sleep 1
-    fi
-fi
-
-if [ ! -e "ezre.spec" ]; then
-    cp -v "$ezre_files"/ezre.spec ezre.spec
-fi
-
-if [ ! -f "variable-values.txt" ]; then
-
-    # Line 1
-    read -p "Enter your name: " YOUR_NAME
-    echo "$YOUR_NAME" > variable-values.txt
-
-    # Line 2
-    read -p "Enter the executable name (without .exe extension): " PROGRAM
-    echo "$PROGRAM" >> variable-values.txt
-
-    # Line 3
-    read -p "Enter the version number (i.e, 1.0): " VERSION
-    echo "$VERSION" >> variable-values.txt
-
-    # Line 4
-    read -p "Describe your software: " SOFTWARE_DESCRIPTION
-    echo "$SOFTWARE_DESCRIPTION" >> variable-values.txt
-
-    # Line 5
-    read -p "Enter the license of your software: " LICENSE
-    echo "$LICENSE" >> variable-values.txt
-
-    # Line 6
-    read -p "Enter the website your software can be found at: " URL
-    echo "$URL" >> variable-values.txt
-
-    # Line 7
-    read -p "What is your release base name (i.e hello-world): " RELEASE_BASE_NAME
-    echo "$RELEASE_BASE_NAME" >> variable-values.txt
-
-    # Line 8
-    read -p "Enter the files and folders to include in each release (i.e *.md, readme.md, images): " RELEASE_FILES
-    echo "$RELEASE_FILES" >> variable-values.txt
-
-    # Line 9
-    read -p "Are the default apt dependencies ok? (build-essential g++-multilib gcc-multilib mingw-w64-tools g++-mingw-w64 zip dpkg-dev rpm) (Y/n) " -n 1 -r USE_CUSTOM_APT_DEPS
-    echo
-
-    if [[ "$USE_CUSTOM_APT_DEPS" == "Y" || "$USE_CUSTOM_APT_DEPS" == "y" ]]; then
-        APT_DEPS="build-essential g++-multilib gcc-multilib mingw-w64-tools g++-mingw-w64 zip dpkg-dev rpm"
-    else
-        read -p "Enter your custom apt dependencies: " -r APT_DEPS
-    fi
-
-    echo "$APT_DEPS" >> variable-values.txt
-
-    # Line 10
-    read -p "Are the default dnf dependencies ok? (gcc g++ libstdc++-static.i686 glibc-static.i686 libstdc++-static.x86_64 mingw64-gcc mingw32-gcc mingw32-gcc-c++ mingw64-gcc-c++ zip) (Y/n) " -n 1 -r USE_CUSTOM_DNF_DEPS
-    echo
-
-    if [[ "$USE_CUSTOM_DNF_DEPS" == "Y" || "$USE_CUSTOM_DNF_DEPS" == "y" ]]; then
-        DNF_DEPS="gcc g++ libstdc++-static.i686 glibc-static.i686 libstdc++-static.x86_64 mingw64-gcc mingw32-gcc mingw32-gcc-c++ mingw64-gcc-c++ zip"
-    else
-        read -p "Enter your custom dnf dependencies: " -r DNF_DEPS
-    fi
+    echo -e "\nInfo: \"variables.mk\" already exists in the current working directory and will be updated."
     
-    echo "$DNF_DEPS" >> variable-values.txt
+    while IFS='=' read -r key value; do
+        # Ignore lines that are empty or start with '#' (comments)
+        if [[ -z "$key" || "$key" =~ ^\s*# ]]; then
+            continue
+        fi
+
+        # Remove any trailing whitespace from the value
+        value=$(echo "$value" | xargs)
+        # Assign the value to the bash variable
+        export "$key"="$value"
+    done < "variables.mk"
     
-    # Line 11
-    read -p "Are the default MacPorts dependencies ok? (mingw-w64) (Y/n) " -n 1 -r USE_CUSTOM_MACPORTS_DEPS
-    echo
+    cp -v "$ezre_files"/variables.mk .
 
-    if [[ "$USE_CUSTOM_MACPORTS_DEPS" == "Y" || "$USE_CUSTOM_MACPORTS_DEPS" == "y" ]]; then
-        MACPORTS_DEPS="mingw-w64"
-    else
-        read -p "Enter your custom macports dependencies: " -r MACPORTS_DEPS
-    fi
+    # Transfer values over to new variables.mk
+    sed "$sed_args" "s|^PROGRAM=.*|PROGRAM=$PROGRAM|" variables.mk
+    sed "$sed_args" "s|^VERSION=.*|VERSION=$VERSION|" variables.mk
+    sed "$sed_args" "s|^SOURCE_FILES=.*|SOURCE_FILES=$SOURCE_FILES|" variables.mk
 
-    echo "$MACPORTS_DEPS" >> variable-values.txt
+    sed "$sed_args" "s|^RELEASE_BASE_NAME=.*|RELEASE_BASE_NAME=$RELEASE_BASE_NAME|" variables.mk
+    sed "$sed_args" "s|^RELEASE_FILES=.*|RELEASE_FILES=$RELEASE_FILES|" variables.mk
 
-    # Line 12
-    read -p "Enter the compiler to use (gcc for c or g++ for c++): " COMPILER
-    echo "$COMPILER" >> variable-values.txt
+    sed "$sed_args" "s|^SOFTWARE_DESCRIPTION=.*|SOFTWARE_DESCRIPTION=$SOFTWARE_DESCRIPTION|" variables.mk
+    sed "$sed_args" "s|^YOUR_NAME=.*|YOUR_NAME=$YOUR_NAME|" variables.mk
+    sed "$sed_args" "s|^WEBSITE=.*|WEBSITE=$WEBSITE|" variables.mk
+    sed "$sed_args" "s|^LICENSE=.*|LICENSE=$LICENSE|" variables.mk
 
-    # Line 13
-    read -p 'Are the default Mac OS host compiler flags ok? (-static must not be here) (-Wall -Wextra -Werror -pedantic) (Y/n) ' -n 1 -r USE_CUSTOM_COMPILER_FLAGS_MAC
-    echo
+    sed "$sed_args" "s|^BUILD_DEPENDS_APT=.*|BUILD_DEPENDS_APT=$BUILD_DEPENDS_APT|" variables.mk
+    sed "$sed_args" "s|^BUILD_DEPENDS_DNF=.*|BUILD_DEPENDS_DNF=$BUILD_DEPENDS_DNF|" variables.mk
+    sed "$sed_args" "s|^BUILD_DEPENDS_MACPORTS=.*|BUILD_DEPENDS_MACPORTS=$BUILD_DEPENDS_MACPORTS|" variables.mk
 
-    if [[ "$USE_CUSTOM_COMPILER_FLAGS_MAC" == "Y" || "$USE_CUSTOM_COMPILER_FLAGS_MAC" == "y" ]]; then
-        COMPILER_FLAGS_MAC="-Wall -Wextra -Werror -pedantic" >> variable-values.txt
-    else
-        read -p "Enter your custom Mac OS compiler flags: " -r COMPILER_FLAGS_MAC
-    fi
+    sed "$sed_args" "s|^COMPILER=.*|COMPILER=$COMPILER|" variables.mk
+    sed "$sed_args" "s|^COMPILER_MAC=.*|COMPILER_MAC=$COMPILER_MAC|" variables.mk
+    sed "$sed_args" "s|^COMPILER_MAC_LEGACY=.*|COMPILER_MAC_LEGACY=$COMPILER_MAC_LEGACY|" variables.mk
+    sed "$sed_args" "s|^COMPILER_WINDOWS_I686=.*|COMPILER_WINDOWS_I686=$COMPILER_WINDOWS_I686|" variables.mk
+    sed "$sed_args" "s|^COMPILER_WINDOWS_X86_64=.*|COMPILER_WINDOWS_X86_64=$COMPILER_WINDOWS_X86_64|" variables.mk
 
-    echo "$COMPILER_FLAGS_MAC" >> variable-values.txt
+    sed "$sed_args" "s|^COMPILER_FLAGS=.*|COMPILER_FLAGS=$COMPILER_FLAGS|" variables.mk
+    sed "$sed_args" "s|^COMPILER_FLAGS_MAC=.*|COMPILER_FLAGS_MAC=$COMPILER_FLAGS_MAC|" variables.mk
+    sed "$sed_args" "s|^COMPILER_FLAGS_MAC=LEGACY.*|COMPILER_FLAGS_MAC_LEGACY=$COMPILER_FLAGS_MAC_LEGACY|" variables.mk
+    sed "$sed_args" "s|^COMPILER_FLAGS_WINDOWS_I686=.*|COMPILER_FLAGS_WINDOWS_I686=$COMPILER_FLAGS_WINDOWS_I686|" variables.mk
+    sed "$sed_args" "s|^COMPILER_FLAGS_WINDOWS_X86_64=.*|COMPILER_FLAGS_WINDOWS_X86_64=$COMPILER_FLAGS_WINDOWS_X86_64|" variables.mk
+    sed "$sed_args" "s|^COMPILER_FLAGS_LINUX_I386=.*|COMPILER_FLAGS_LINUX_I386=$COMPILER_FLAGS_LINUX_I386|" variables.mk
 
-    # Line 14
-   read -p 'Are the default compiler flags ok? (-Wall -Wextra -Werror -pedantic -static) (Y/n) ' -n 1 -r USE_CUSTOM_COMPILER_FLAGS
-    echo
+    sed "$sed_args" "s|^LDFLAGS=.*|LDFLAGS=$LDFLAGS|" variables.mk
+    sed "$sed_args" "s|^LDFLAGS_MAC=.*|LDFLAGS_MAC=$LDFLAGS_MAC|" variables.mk
+    sed "$sed_args" "s|^LDFLAGS_MAC_LEGACY=.*|LDFLAGS_MAC_LEGACY=$LDFLAGS_MAC_LEGACY|" variables.mk
+    sed "$sed_args" "s|^LDFLAGS_WINDOWS_I686=.*|LDFLAGS_WINDOWS_I686=$LDFLAGS_WINDOWS_I686|" variables.mk
+    sed "$sed_args" "s|^LDFLAGS_WINDOWS_X86_64=.*|LDFLAGS_WINDOWS_X86_64=$LDFLAGS_WINDOWS_X86_64|" variables.mk
 
-    if [[ "$USE_CUSTOM_COMPILER_FLAGS" == "Y" || "$USE_CUSTOM_MACPORTS_DEPS" == "y" ]]; then
-        COMPILER_FLAGS="-Wall -Wextra -Werror -pedantic -static" >> variable-values.txt
-    else
-        read -p "Enter your custom Mac OS compiler flags: " -r COMPILER_FLAGS
-    fi
+    sed "$sed_args" "s|^STRIP=.*|STRIP=$STRIP|" variables.mk
+    sed "$sed_args" "s|^STRIP_MAC=.*|STRIP_MAC=$STRIP_MAC|" variables.mk
+    sed "$sed_args" "s|^STRIP_MAC=LEGACY.*|STRIP_MAC_LEGACY=$STRIP_MAC_LEGACY|" variables.mk
+    sed "$sed_args" "s|^STRIP_WINDOWS_I686=.*|STRIP_WINDOWS_I686=$STRIP_WINDOWS_I686|" variables.mk
+    sed "$sed_args" "s|^STRIP_WINDOWS_X86_64=.*|STRIP_WINDOWS_X86_64=$STRIP_WINDOWS_X86_64|" variables.mk
 
-    echo "$COMPILER_FLAGS" >> variable-values.txt
+    sed "$sed_args" "s|^BUILD_DIR=.*|BUILD_DIR=$BUILD_DIR|" variables.mk
 
-    # Line 15
-    read -p "Enter source filenames (i.e *.c, *.cpp, hello.c): " SOURCE_FILES
-    echo "$SOURCE_FILES" >> variable-values.txt
+    echo -e "\nUpdated variables.mk."
 
-    echo "variable-values.txt has been generated."
+    # RPM
+    sed "$sed_args" "s|your_executable|$PROGRAM|" ezre.spec
+    sed "$sed_args" "s|License:*|License: $LICENSE|" ezre.spec
+    sed "$sed_args" "s|Name:*|Name: $RELEASE_BASE_NAME|" ezre.spec
+    sed "$sed_args" "s|Summary:*|Summary: $SOFTWARE_DESCRIPTION|" ezre.spec
+    sed "$sed_args" "/%description/{n; s|^|$SOFTWARE_DESCRIPTION\n|;}" ezre.spec
+    # Add v for naming convention.
+    sed "$sed_args" "s|Version:*|Version: v$VERSION|" ezre.spec
+    sed "$sed_args" "s|URL:*|URL: $WEBSITE|" ezre.spec
+    sed "$sed_args" "s|Packager:*|Packager: $YOUR_NAME|" ezre.spec
+
+    echo "Updated ezre.spec."
+
+    # DEB
+    sed "$sed_args" "s|^Package:*|Package: $RELEASE_BASE_NAME|" control-i386
+    sed "$sed_args" "s|Description:*|Description: $SOFTWARE_DESCRIPTION|" control-i386
+    sed "$sed_args" "s|Version:*|Version: $VERSION|" control-i386
+    sed "$sed_args" "s|Homepage:*|Homepage: $WEBSITE|" control-i386
+    sed "$sed_args" "s|Maintainer:*|Maintainer: $YOUR_NAME|" control-i386
+
+    echo "Updated control-i386."
+
+    sed "$sed_args" "s|^Package:*|Package: $RELEASE_BASE_NAME|" control-x86_64
+    sed "$sed_args" "s|Description:*|Description: $SOFTWARE_DESCRIPTION|" control-x86_64
+    sed "$sed_args" "s|Version:*|Version: $VERSION|" control-x86_64
+    sed "$sed_args" "s|Homepage:*|Homepage: $WEBSITE|" control-x86_64
+    sed "$sed_args" "s|Maintainer:*|Maintainer: $YOUR_NAME|" control-x86_64
+
+    echo "Updated control-x86_64."
 else
-    if [[ -f "variable-values.txt" ]]; then
-        YOUR_NAME=$(sed -n '1p' variable-values.txt)
-        PROGRAM=$(sed -n '2p' variable-values.txt)
-        VERSION=$(sed -n '3p' variable-values.txt)
-        SOFTWARE_DESCRIPTION=$(sed -n '4p' variable-values.txt)
-        LICENSE=$(sed -n '5p' variable-values.txt)
-        URL=$(sed -n '6p' variable-values.txt)
-        RELEASE_BASE_NAME=$(sed -n '7p' variable-values.txt)
-        RELEASE_FILES=$(sed -n '8p' variable-values.txt)
-        APT_DEPS=$(sed -n '9p' variable-values.txt)
-        DNF_DEPS=$(sed -n '10p' variable-values.txt)
-        MACPORTS_DEPS=$(sed -n '11p' variable-values.txt)
-        COMPILER=$(sed -n '12p' variable-values.txt)
-        COMPILER_FLAGS_MAC=$(sed -n '13p' variable-values.txt)
-        COMPILER_FLAGS=$(sed -n '14p' variable-values.txt)
-        SOURCE_FILES=$(sed -n '15p' variable-values.txt)
-    fi
+    cp -v "$ezre_files"/variables.mk .
 fi
-
-sed "$sed_args" "s|^PROGRAM=.*|PROGRAM=$PROGRAM|" variables.mk
-sed "$sed_args" "s|^VERSION=.*|VERSION=$VERSION|" variables.mk
-sed "$sed_args" "s|^RELEASE_BASE_NAME=.*|RELEASE_BASE_NAME=$RELEASE_BASE_NAME|" variables.mk
-sed "$sed_args" "s|^RELEASE_FILES=.*|RELEASE_FILES=$RELEASE_FILES|" variables.mk
-sed "$sed_args" "s|^BUILD_DEPENDS_APT=.*|BUILD_DEPENDS_APT=$APT_DEPS|" variables.mk
-sed "$sed_args" "s|^BUILD_DEPENDS_DNF=.*|BUILD_DEPENDS_DNF=$DNF_DEPS|" variables.mk
-sed "$sed_args" "s|^BUILD_DEPENDS_MACPORTS=.*|BUILD_DEPENDS_MACPORTS=$MACPORTS_DEPS|" variables.mk
-sed "$sed_args" "s|^COMPILER=.*|COMPILER=$COMPILER|" variables.mk
-sed "$sed_args" "s|^COMPILER_FLAGS_MAC=.*|COMPILER_FLAGS_MAC=$COMPILER_FLAGS_MAC|" variables.mk
-sed "$sed_args" "s|^COMPILER_FLAGS=.*|COMPILER_FLAGS=$COMPILER_FLAGS|" variables.mk
-sed "$sed_args" "s|^SOURCE_FILES=.*|SOURCE_FILES=$SOURCE_FILES|" variables.mk
-
-
-# RPM
-sed "$sed_args" "s|your_executable|$PROGRAM|" ezre.spec
-sed "$sed_args" "s|License:*|License: $LICENSE|" ezre.spec
-sed "$sed_args" "s|Name:*|Name: $RELEASE_BASE_NAME|" ezre.spec
-sed "$sed_args" "s|Summary:*|Summary: $SOFTWARE_DESCRIPTION|" ezre.spec
-sed "$sed_args" "/%description/{n; s|^|$SOFTWARE_DESCRIPTION\n|;}" ezre.spec
-sed "$sed_args" "s|Version:*|Version: $VERSION|" ezre.spec
-sed "$sed_args" "s|URL:*|URL: $URL|" ezre.spec
-sed "$sed_args" "s|Packager:*|Packager: $YOUR_NAME|" ezre.spec
-
-
-# DEB
-sed "$sed_args" "s|^Package:*|Package: $RELEASE_BASE_NAME|" control-i386
-sed "$sed_args" "s|Description:*|Description: $SOFTWARE_DESCRIPTION|" control-i386
-sed "$sed_args" "s|Version:*|Version: $VERSION|" control-i386
-sed "$sed_args" "s|Homepage:*|Homepage: $URL|" control-i386
-sed "$sed_args" "s|Maintainer:*|Maintainer: $YOUR_NAME|" control-i386
-
-sed "$sed_args" "s|^Package:*|Package: $RELEASE_BASE_NAME|" control-x86_64
-sed "$sed_args" "s|Description:*|Description: $SOFTWARE_DESCRIPTION|" control-x86_64
-sed "$sed_args" "s|Version:*|Version: $VERSION|" control-x86_64
-sed "$sed_args" "s|Homepage:*|Homepage: $URL|" control-x86_64
-sed "$sed_args" "s|Maintainer:*|Maintainer: $YOUR_NAME|" control-x86_64
-
-echo "variables.mk has been updated."
