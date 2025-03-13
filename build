@@ -25,7 +25,7 @@ else
 fi
 
 sed "$sed_args" "s|^version=.*|version=$version|" ezre
-sed "$sed_args" "s|^VERSION=.*|VERSION=$version|" control
+sed "$sed_args" "s|^Version:.*|Version: $version|" control
 sed "$sed_args" "s|Version:.*|Version: v$version|" ezre.spec
 
 mkdir -p "$release_name"/usr/bin
