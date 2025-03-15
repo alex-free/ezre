@@ -14,8 +14,8 @@ ifeq ($(strip $(COMPILER)),)
 endif
 
 # Append DEFINE VERSION flag. We do the others later after we build them up a bit more.
-COMPILER_FLAGS_HOST := $(COMPILER_FLAGS_HOST) -DVERSION="$(VERSION)"
-COMPILER_FLAGS_MAC := $(COMPILER_FLAGS_MAC) -DVERSION="$(VERSION)"
+COMPILER_FLAGS_HOST := $(COMPILER_FLAGS_HOST) -DVERSION=\""$(VERSION)"\"
+COMPILER_FLAGS_MAC := $(COMPILER_FLAGS_MAC) -DVERSION=\""$(VERSION)"\"
 
 # Optionals that need to be set to something (all others may be empty).
 
@@ -106,6 +106,10 @@ endif
 ifndef LEGACY
 override LEGACY=FALSE
 endif
+
+$(PROGRAM): clean
+
+# Must run these in a rule.
 
 ifeq ($(strip $(PROGRAM)),)
 	$(error Error: The $$PROGRAM variable is not set in variables.mk but is required)
@@ -201,7 +205,6 @@ ifeq ($(strip $(STRIP_WINDOWS_X86_64)),)
 	$(error Error: The $$STRIP_WINDOWS_X86_64 variable is not set in variables.mk but is required)
 endif
 
-$(PROGRAM): clean
 	mkdir -p $(BUILD_DIR)
 
 	@if [ "$(shell uname)" = "Darwin" ] && [ "$(COMPILER)" != "$(COMPILER_WINDOWS_I686)" ] && [ "$(COMPILER)" != "$(COMPILER_WINDOWS_X86_64)" ] && [ "$(LEGACY)" = "FALSE" ] && [ "$(SHELL_SCRIPT_MAC_ENABLE)" = "TRUE" ]; then \
