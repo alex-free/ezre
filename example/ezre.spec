@@ -5,6 +5,7 @@ Release: 1
 License: NOASSERTION
 URL: https://github.com/alex-free/ezre       
 Packager: Alex Free
+Group: Unspecified
 
 %description
 Hello world example for EzRe.

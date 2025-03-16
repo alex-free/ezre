@@ -1,10 +1,39 @@
 #!/bin/bash
 
 # EzRe build script
-version="1.1.0"
+version="1.1.1"
 program="ezre"
 release_name="$program-v$version"
 release_files="readme.md license.md changelog.md template-files example ezre"
+
+
+if [ "$1" == "deps" ]; then
+    echo "Info: root privileges are required to install build dependencies."
+
+	if [ "$(uname)" = "Darwin" ]; then
+		echo "Mac OS detected."
+
+		if command -v port > /dev/null; then
+			echo "Using MacPorts"
+			sudo port -N install rpm dpkg
+		else
+			echo "MacPorts is not installed"
+		fi
+	
+    elif [ "$(shell uname)" = "Linux" ]; then
+		echo "Linux detected."
+	
+    	if command -v dnf > /dev/null; then
+			echo "Using dnf"
+			sudo dnf -y install dpkg-dev rpmdevtools
+		elif command -v apt > /dev/null; then
+			echo "Using apt"
+			sudo apt install --yes dpkg-dev rpm
+		else
+			echo "MacPorts, DNF, and APT package managers were not found. The make deps rule requires one of these package managers to automatically install all required build dependencies."
+		fi
+    fi
+fi
 
 cd "$(dirname "$0")"
 
@@ -18,15 +47,21 @@ fi
 
 if sed --version >/dev/null 2>&1; then
     echo "Info: using GNU sed"
-    sed_args="-i"
+    bsd_sed=false
 else
     echo "Info: using BSD sed"
-    sed_args="-i '' -E"
+    bsd_sed=true
 fi
 
-sed "$sed_args" "s|^version=.*|version=$version|" ezre
-sed "$sed_args" "s|^Version:.*|Version: $version|" control
-sed "$sed_args" "s|Version:.*|Version: v$version|" rpm.spec
+if [ "$bsd_sed" == "true" ]; then
+    sed -i '' -E "s|^version=.*|version=$version|" ezre
+    sed -i '' -E "s|^Version:.*|Version: $version|" control
+    sed -i '' -E "s|Version:.*|Version: v$version|" ezre.spec
+else
+    sed -i'' -E "s|^version=.*|version=$version|" ezre
+    sed -i'' -E "s|^Version:.*|Version: $version|" control
+    sed -i'' -E "s|Version:.*|Version: v$version|" ezre.spec
+fi
 
 mkdir -p "$release_name"/usr/bin
 mkdir -p "$release_name"/usr/share/ezre
@@ -48,9 +83,9 @@ rm -rf "$release_name"/*
 
 rm -rf rpm-tmp
 mkdir -p rpm-tmp/RPMS rpm-tmp/SPECS rpm-tmp/SOURCES rpm-tmp/BUILD
-cp rpm.spec rpm-tmp/SPECS/rpm.spec
+cp ezre.spec rpm-tmp/SPECS/ezre.spec
 cp ezre rpm-tmp/SOURCES/ezre
 cp -r template-files rpm-tmp/SOURCES/
-rpmbuild -bb --target noarch rpm-tmp/SPECS/rpm.spec --define "_topdir $PWD/rpm-tmp"
+rpmbuild -bb --target noarch rpm-tmp/SPECS/ezre.spec --define "_topdir $PWD/rpm-tmp" --define "_tmppath $PWD/rpm-tmp"
 mv rpm-tmp/RPMS/noarch/*.rpm .
 rm -rf rpm-tmp

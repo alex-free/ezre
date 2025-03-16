@@ -5,6 +5,7 @@ Release: 1
 License:
 URL:       
 Packager:
+Group: Unspecified
 
 %description
 

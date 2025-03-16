@@ -1,4 +1,4 @@
-# This GNUMakefile is part of EzRe v1.0.8, see https://github.com/alex-free/ezre
+# This GNUMakefile is part of EzRe v1.1.1, see https://github.com/alex-free/ezre
 
 include variables.mk
 

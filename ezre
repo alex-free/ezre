@@ -21,28 +21,56 @@ echo "Info: Ezre template files directory: "$ezre_files""
 
 if sed --version >/dev/null 2>&1; then
     echo "Info: using GNU sed."
-    sed_args="-i"
+    bsd_sed=false
 else
     echo "Info: using BSD sed."
-    sed_args="-i '' -E"
+    bsd_sed=true
 fi
 
 if [ "$#" -eq 2 ] && [ "$1" == "-u" ]; then
         
     if [ -f "control-i386" ]; then
-        sed "$sed_args" "s|^VERSION=.*|VERSION=$VERSION|" control-i386
+
+        if [ "$bsd_sed" == "true" ]; then
+            sed -i '' -E "s|^Version:.*|Version: "$2"|" control-i386
+        else
+            sed -i'' -E "s|^Version:.*|Version: "$2"|" control-i386
+        fi
+
         echo "control-i386 has been updated"
     fi
 
     if [ -f "control-x86_64" ]; then
-        sed "$sed_args" "s|^VERSION=.*|VERSION=$VERSION|" control-x86_64
-        echo "control-x86_64 has been updated"
+        if [ "$bsd_sed" == "true" ]; then
+            sed -i '' -E "s|^Version:.*|Version: "$2"|" control-x86_64
+        else
+            sed -i'' -E "s|^Version:.*|Version: "$2"|" control-x86_64
+        fi
+
+	    echo "control-x86_64 has been updated"
     fi
 
     if [ -f "ezre.spec" ]; then
         # Add v for naming convention.
-        sed "$sed_args" "s|Version:.*|Version: v$VERSION|" ezre.spec
+
+        if [ "$bsd_sed" == "true" ]; then
+            sed  -i '' -E "s|Version:.*|Version: v"$2"|" ezre.spec
+        else
+            sed  -i'' -E "s|Version:.*|Version: v"$2"|" ezre.spec
+        fi
+        
         echo "ezre.spec has been updated"
+    fi
+
+    if [ -f "variables.mk" ]; then
+        
+        if [ "$bsd_sed" == "true" ]; then
+            sed  -i '' -E "s|VERSION=.*|VERSION="$2"|" variables.mk
+        else
+            sed  -i'' -E "s|VERSION=.*|VERSION="$2"|" variables.mk
+        fi
+
+        echo "variables.mk has been updated"
     fi
 
     exit 0
@@ -101,86 +129,167 @@ if [ -e "variables.mk" ]; then
     cp -v "$ezre_files"/variables.mk .
 
     # Transfer values over to new variables.mk
-    sed "$sed_args" "s|^PROGRAM=.*|PROGRAM=$PROGRAM|" variables.mk
-    sed "$sed_args" "s|^VERSION=.*|VERSION=$VERSION|" variables.mk
-    sed "$sed_args" "s|^SOURCE_FILES=.*|SOURCE_FILES=$SOURCE_FILES|" variables.mk
+    if [ "$bsd_sed" == "true" ]; then
+        sed -i '' -E "s|^PROGRAM=.*|PROGRAM=$PROGRAM|" variables.mk
+        sed -i '' -E "s|^VERSION=.*|VERSION=$VERSION|" variables.mk
+        sed -i '' -E "s|^SOURCE_FILES=.*|SOURCE_FILES=$SOURCE_FILES|" variables.mk
 
-    sed "$sed_args" "s|^RELEASE_BASE_NAME=.*|RELEASE_BASE_NAME=$RELEASE_BASE_NAME|" variables.mk
-    sed "$sed_args" "s|^RELEASE_FILES=.*|RELEASE_FILES=$RELEASE_FILES|" variables.mk
+        sed -i '' -E "s|^RELEASE_BASE_NAME=.*|RELEASE_BASE_NAME=$RELEASE_BASE_NAME|" variables.mk
+        sed -i '' -E "s|^RELEASE_FILES=.*|RELEASE_FILES=$RELEASE_FILES|" variables.mk
 
-    sed "$sed_args" "s|^SOFTWARE_DESCRIPTION=.*|SOFTWARE_DESCRIPTION=$SOFTWARE_DESCRIPTION|" variables.mk
-    sed "$sed_args" "s|^YOUR_NAME=.*|YOUR_NAME=$YOUR_NAME|" variables.mk
-    sed "$sed_args" "s|^WEBSITE=.*|WEBSITE=$WEBSITE|" variables.mk
-    sed "$sed_args" "s|^LICENSE=.*|LICENSE=$LICENSE|" variables.mk
+        sed -i '' -E "s|^SOFTWARE_DESCRIPTION=.*|SOFTWARE_DESCRIPTION=$SOFTWARE_DESCRIPTION|" variables.mk
+        sed -i '' -E "s|^YOUR_NAME=.*|YOUR_NAME=$YOUR_NAME|" variables.mk
+        sed -i '' -E "s|^WEBSITE=.*|WEBSITE=$WEBSITE|" variables.mk
+        sed -i '' -E "s|^LICENSE=.*|LICENSE=$LICENSE|" variables.mk
 
-    sed "$sed_args" "s|^BUILD_DEPENDS_APT=.*|BUILD_DEPENDS_APT=$BUILD_DEPENDS_APT|" variables.mk
-    sed "$sed_args" "s|^BUILD_DEPENDS_DNF=.*|BUILD_DEPENDS_DNF=$BUILD_DEPENDS_DNF|" variables.mk
-    sed "$sed_args" "s|^BUILD_DEPENDS_MACPORTS=.*|BUILD_DEPENDS_MACPORTS=$BUILD_DEPENDS_MACPORTS|" variables.mk
+        sed -i '' -E "s|^BUILD_DEPENDS_APT=.*|BUILD_DEPENDS_APT=$BUILD_DEPENDS_APT|" variables.mk
+        sed -i '' -E "s|^BUILD_DEPENDS_DNF=.*|BUILD_DEPENDS_DNF=$BUILD_DEPENDS_DNF|" variables.mk
+        sed -i '' -E "s|^BUILD_DEPENDS_MACPORTS=.*|BUILD_DEPENDS_MACPORTS=$BUILD_DEPENDS_MACPORTS|" variables.mk
 
-    sed "$sed_args" "s|^COMPILER_HOST=.*|COMPILER_HOST=$COMPILER_HOST|" variables.mk
-    sed "$sed_args" "s|^COMPILER_MAC=.*|COMPILER_MAC=$COMPILER_MAC|" variables.mk
-    sed "$sed_args" "s|^COMPILER_MAC_LEGACY=.*|COMPILER_MAC_LEGACY=$COMPILER_MAC_LEGACY|" variables.mk
-    sed "$sed_args" "s|^COMPILER_WINDOWS_I686=.*|COMPILER_WINDOWS_I686=$COMPILER_WINDOWS_I686|" variables.mk
-    sed "$sed_args" "s|^COMPILER_WINDOWS_X86_64=.*|COMPILER_WINDOWS_X86_64=$COMPILER_WINDOWS_X86_64|" variables.mk
+        sed -i '' -E "s|^COMPILER_HOST=.*|COMPILER_HOST=$COMPILER_HOST|" variables.mk
+        sed -i '' -E "s|^COMPILER_MAC=.*|COMPILER_MAC=$COMPILER_MAC|" variables.mk
+        sed -i '' -E "s|^COMPILER_MAC_LEGACY=.*|COMPILER_MAC_LEGACY=$COMPILER_MAC_LEGACY|" variables.mk
+        sed -i '' -E "s|^COMPILER_WINDOWS_I686=.*|COMPILER_WINDOWS_I686=$COMPILER_WINDOWS_I686|" variables.mk
+        sed -i '' -E "s|^COMPILER_WINDOWS_X86_64=.*|COMPILER_WINDOWS_X86_64=$COMPILER_WINDOWS_X86_64|" variables.mk
 
-    sed "$sed_args" "s|^COMPILER_FLAGS_HOST=.*|COMPILER_FLAGS_HOST=$COMPILER_FLAGS_HOST|" variables.mk
-    sed "$sed_args" "s|^COMPILER_FLAGS_MAC=.*|COMPILER_FLAGS_MAC=$COMPILER_FLAGS_MAC|" variables.mk
-    sed "$sed_args" "s|^COMPILER_FLAGS_MAC=LEGACY.*|COMPILER_FLAGS_MAC_LEGACY=$COMPILER_FLAGS_MAC_LEGACY|" variables.mk
-    sed "$sed_args" "s|^COMPILER_FLAGS_WINDOWS_I686=.*|COMPILER_FLAGS_WINDOWS_I686=$COMPILER_FLAGS_WINDOWS_I686|" variables.mk
-    sed "$sed_args" "s|^COMPILER_FLAGS_WINDOWS_X86_64=.*|COMPILER_FLAGS_WINDOWS_X86_64=$COMPILER_FLAGS_WINDOWS_X86_64|" variables.mk
-    sed "$sed_args" "s|^COMPILER_FLAGS_LINUX_I386=.*|COMPILER_FLAGS_LINUX_I386=$COMPILER_FLAGS_LINUX_I386|" variables.mk
+        sed -i '' -E "s|^COMPILER_FLAGS_HOST=.*|COMPILER_FLAGS_HOST=$COMPILER_FLAGS_HOST|" variables.mk
+        sed -i '' -E "s|^COMPILER_FLAGS_MAC=.*|COMPILER_FLAGS_MAC=$COMPILER_FLAGS_MAC|" variables.mk
+        sed -i '' -E "s|^COMPILER_FLAGS_MAC=LEGACY.*|COMPILER_FLAGS_MAC_LEGACY=$COMPILER_FLAGS_MAC_LEGACY|" variables.mk
+        sed -i '' -E "s|^COMPILER_FLAGS_WINDOWS_I686=.*|COMPILER_FLAGS_WINDOWS_I686=$COMPILER_FLAGS_WINDOWS_I686|" variables.mk
+        sed -i '' -E "s|^COMPILER_FLAGS_WINDOWS_X86_64=.*|COMPILER_FLAGS_WINDOWS_X86_64=$COMPILER_FLAGS_WINDOWS_X86_64|" variables.mk
+        sed -i '' -E "s|^COMPILER_FLAGS_LINUX_I386=.*|COMPILER_FLAGS_LINUX_I386=$COMPILER_FLAGS_LINUX_I386|" variables.mk
 
-    sed "$sed_args" "s|^LDFLAGS_HOST=.*|LDFLAGS_HOST=$LDFLAGS_HOST|" variables.mk
-    sed "$sed_args" "s|^LDFLAGS_MAC=.*|LDFLAGS_MAC=$LDFLAGS_MAC|" variables.mk
-    sed "$sed_args" "s|^LDFLAGS_MAC_LEGACY=.*|LDFLAGS_MAC_LEGACY=$LDFLAGS_MAC_LEGACY|" variables.mk
-    sed "$sed_args" "s|^LDFLAGS_WINDOWS_I686=.*|LDFLAGS_WINDOWS_I686=$LDFLAGS_WINDOWS_I686|" variables.mk
-    sed "$sed_args" "s|^LDFLAGS_WINDOWS_X86_64=.*|LDFLAGS_WINDOWS_X86_64=$LDFLAGS_WINDOWS_X86_64|" variables.mk
+        sed -i '' -E "s|^LDFLAGS_HOST=.*|LDFLAGS_HOST=$LDFLAGS_HOST|" variables.mk
+        sed -i '' -E "s|^LDFLAGS_MAC=.*|LDFLAGS_MAC=$LDFLAGS_MAC|" variables.mk
+        sed -i '' -E "s|^LDFLAGS_MAC_LEGACY=.*|LDFLAGS_MAC_LEGACY=$LDFLAGS_MAC_LEGACY|" variables.mk
+        sed -i '' -E "s|^LDFLAGS_WINDOWS_I686=.*|LDFLAGS_WINDOWS_I686=$LDFLAGS_WINDOWS_I686|" variables.mk
+        sed -i '' -E "s|^LDFLAGS_WINDOWS_X86_64=.*|LDFLAGS_WINDOWS_X86_64=$LDFLAGS_WINDOWS_X86_64|" variables.mk
 
-    sed "$sed_args" "s|^STRIP_HOST=.*|STRIP_HOST=$STRIP_HOST|" variables.mk
-    sed "$sed_args" "s|^STRIP_MAC=.*|STRIP_MAC=$STRIP_MAC|" variables.mk
-    sed "$sed_args" "s|^STRIP_MAC=LEGACY.*|STRIP_MAC_LEGACY=$STRIP_MAC_LEGACY|" variables.mk
-    sed "$sed_args" "s|^STRIP_WINDOWS_I686=.*|STRIP_WINDOWS_I686=$STRIP_WINDOWS_I686|" variables.mk
-    sed "$sed_args" "s|^STRIP_WINDOWS_X86_64=.*|STRIP_WINDOWS_X86_64=$STRIP_WINDOWS_X86_64|" variables.mk
+        sed -i '' -E "s|^STRIP_HOST=.*|STRIP_HOST=$STRIP_HOST|" variables.mk
+        sed -i '' -E "s|^STRIP_MAC=.*|STRIP_MAC=$STRIP_MAC|" variables.mk
+        sed -i '' -E "s|^STRIP_MAC=LEGACY.*|STRIP_MAC_LEGACY=$STRIP_MAC_LEGACY|" variables.mk
+        sed -i '' -E "s|^STRIP_WINDOWS_I686=.*|STRIP_WINDOWS_I686=$STRIP_WINDOWS_I686|" variables.mk
+        sed -i '' -E "s|^STRIP_WINDOWS_X86_64=.*|STRIP_WINDOWS_X86_64=$STRIP_WINDOWS_X86_64|" variables.mk
 
-    sed "$sed_args" "s|^BUILD_DIR=.*|BUILD_DIR=$BUILD_DIR|" variables.mk
+        sed -i '' -E "s|^BUILD_DIR=.*|BUILD_DIR=$BUILD_DIR|" variables.mk
 
-    sed "$sed_args" "s|^SHELL_SCRIPT_HOST=.*|SHELL_SCRIPT_HOST=$SHELL_SCRIPT_HOST|" variables.mk
-    sed "$sed_args" "s|^SHELL_SCRIPT_MAC=.*|SHELL_SCRIPT_MAC=$SHELL_SCRIPT_MAC|" variables.mk
-    sed "$sed_args" "s|^SHELL_SCRIPT_MAC_LEGACY=.*|SHELL_SCRIPT_MAC_LEGACY=$SHELL_SCRIPT_MAC_LEGACY|" variables.mk
-    sed "$sed_args" "s|^SHELL_SCRIPT_WINDOWS_I686=.*|SHELL_SCRIPT_WINDOWS_I686=$SHELL_SCRIPT_WINDOWS_I686|" variables.mk
-    sed "$sed_args" "s|^SHELL_SCRIPT_WINDOWS_X86_64=.*|SHELL_SCRIPT_WINDOWS_X86_64=$SHELL_SCRIPT_WINDOWS_X86_64|" variables.mk
+        sed -i '' -E "s|^SHELL_SCRIPT_HOST=.*|SHELL_SCRIPT_HOST=$SHELL_SCRIPT_HOST|" variables.mk
+        sed -i '' -E "s|^SHELL_SCRIPT_MAC=.*|SHELL_SCRIPT_MAC=$SHELL_SCRIPT_MAC|" variables.mk
+        sed -i '' -E "s|^SHELL_SCRIPT_MAC_LEGACY=.*|SHELL_SCRIPT_MAC_LEGACY=$SHELL_SCRIPT_MAC_LEGACY|" variables.mk
+        sed -i '' -E "s|^SHELL_SCRIPT_WINDOWS_I686=.*|SHELL_SCRIPT_WINDOWS_I686=$SHELL_SCRIPT_WINDOWS_I686|" variables.mk
+        sed -i '' -E "s|^SHELL_SCRIPT_WINDOWS_X86_64=.*|SHELL_SCRIPT_WINDOWS_X86_64=$SHELL_SCRIPT_WINDOWS_X86_64|" variables.mk
 
-    echo -e "\nUpdated variables.mk."
+        echo -e "\nUpdated variables.mk."
 
-    # RPM
-    sed "$sed_args" "s|your_executable|$PROGRAM|" ezre.spec
-    sed "$sed_args" "s|License:*|License: $LICENSE|" ezre.spec
-    sed "$sed_args" "s|Name:*|Name: $RELEASE_BASE_NAME|" ezre.spec
-    sed "$sed_args" "s|Summary:*|Summary: $SOFTWARE_DESCRIPTION|" ezre.spec
-    sed "$sed_args" "/%description/{n; s|^|$SOFTWARE_DESCRIPTION\n|;}" ezre.spec
-    # Add v for naming convention.
-    sed "$sed_args" "s|Version:*|Version: v$VERSION|" ezre.spec
-    sed "$sed_args" "s|URL:*|URL: $WEBSITE|" ezre.spec
-    sed "$sed_args" "s|Packager:*|Packager: $YOUR_NAME|" ezre.spec
+        # RPM
+        sed -i '' -E "s|your_executable|$PROGRAM|" ezre.spec
+        sed -i '' -E "s|License:*|License: $LICENSE|" ezre.spec
+        sed -i '' -E "s|Name:*|Name: $RELEASE_BASE_NAME|" ezre.spec
+        sed -i '' -E "s|Summary:*|Summary: $SOFTWARE_DESCRIPTION|" ezre.spec
+        sed -i '' -E "/%description/{n; s|^|$SOFTWARE_DESCRIPTION\n|;}" ezre.spec
+        # Add v for naming convention.
+        sed -i '' -E "s|Version:*|Version: v$VERSION|" ezre.spec
+        sed -i '' -E "s|URL:*|URL: $WEBSITE|" ezre.spec
+        sed -i '' -E "s|Packager:*|Packager: $YOUR_NAME|" ezre.spec
 
-    echo "Updated ezre.spec."
+        echo "Updated ezre.spec."
 
-    # DEB
-    sed "$sed_args" "s|^Package:*|Package: $RELEASE_BASE_NAME|" control-i386
-    sed "$sed_args" "s|Description:*|Description: $SOFTWARE_DESCRIPTION|" control-i386
-    sed "$sed_args" "s|Version:*|Version: $VERSION|" control-i386
-    sed "$sed_args" "s|Homepage:*|Homepage: $WEBSITE|" control-i386
-    sed "$sed_args" "s|Maintainer:*|Maintainer: $YOUR_NAME|" control-i386
+        # DEB
+        sed -i '' -E "s|^Package:*|Package: $RELEASE_BASE_NAME|" control-i386
+        sed -i '' -E "s|Description:*|Description: $SOFTWARE_DESCRIPTION|" control-i386
+        sed -i '' -E "s|Version:*|Version: $VERSION|" control-i386
+        sed -i '' -E "s|Homepage:*|Homepage: $WEBSITE|" control-i386
+        sed -i '' -E "s|Maintainer:*|Maintainer: $YOUR_NAME|" control-i386
 
-    echo "Updated control-i386."
+        echo "Updated control-i386."
 
-    sed "$sed_args" "s|^Package:*|Package: $RELEASE_BASE_NAME|" control-x86_64
-    sed "$sed_args" "s|Description:*|Description: $SOFTWARE_DESCRIPTION|" control-x86_64
-    sed "$sed_args" "s|Version:*|Version: $VERSION|" control-x86_64
-    sed "$sed_args" "s|Homepage:*|Homepage: $WEBSITE|" control-x86_64
-    sed "$sed_args" "s|Maintainer:*|Maintainer: $YOUR_NAME|" control-x86_64
+        sed -i '' -E "s|^Package:*|Package: $RELEASE_BASE_NAME|" control-x86_64
+        sed -i '' -E "s|Description:*|Description: $SOFTWARE_DESCRIPTION|" control-x86_64
+        sed -i '' -E "s|Version:*|Version: $VERSION|" control-x86_64
+        sed -i '' -E "s|Homepage:*|Homepage: $WEBSITE|" control-x86_64
+        sed -i '' -E "s|Maintainer:*|Maintainer: $YOUR_NAME|" control-x86_64
+        echo "Updated control-x86_64."
+    else
+       sed -i'' -E "s|^PROGRAM=.*|PROGRAM=$PROGRAM|" variables.mk
+        sed -i'' -E "s|^VERSION=.*|VERSION=$VERSION|" variables.mk
+        sed -i'' -E "s|^SOURCE_FILES=.*|SOURCE_FILES=$SOURCE_FILES|" variables.mk
 
-    echo "Updated control-x86_64."
+        sed -i'' -E "s|^RELEASE_BASE_NAME=.*|RELEASE_BASE_NAME=$RELEASE_BASE_NAME|" variables.mk
+        sed -i'' -E "s|^RELEASE_FILES=.*|RELEASE_FILES=$RELEASE_FILES|" variables.mk
+
+        sed -i'' -E "s|^SOFTWARE_DESCRIPTION=.*|SOFTWARE_DESCRIPTION=$SOFTWARE_DESCRIPTION|" variables.mk
+        sed -i'' -E "s|^YOUR_NAME=.*|YOUR_NAME=$YOUR_NAME|" variables.mk
+        sed -i'' -E "s|^WEBSITE=.*|WEBSITE=$WEBSITE|" variables.mk
+        sed -i'' -E "s|^LICENSE=.*|LICENSE=$LICENSE|" variables.mk
+
+        sed -i'' -E "s|^BUILD_DEPENDS_APT=.*|BUILD_DEPENDS_APT=$BUILD_DEPENDS_APT|" variables.mk
+        sed -i'' -E "s|^BUILD_DEPENDS_DNF=.*|BUILD_DEPENDS_DNF=$BUILD_DEPENDS_DNF|" variables.mk
+        sed -i'' -E "s|^BUILD_DEPENDS_MACPORTS=.*|BUILD_DEPENDS_MACPORTS=$BUILD_DEPENDS_MACPORTS|" variables.mk
+
+        sed -i'' -E "s|^COMPILER_HOST=.*|COMPILER_HOST=$COMPILER_HOST|" variables.mk
+        sed -i'' -E "s|^COMPILER_MAC=.*|COMPILER_MAC=$COMPILER_MAC|" variables.mk
+        sed -i'' -E "s|^COMPILER_MAC_LEGACY=.*|COMPILER_MAC_LEGACY=$COMPILER_MAC_LEGACY|" variables.mk
+        sed -i'' -E "s|^COMPILER_WINDOWS_I686=.*|COMPILER_WINDOWS_I686=$COMPILER_WINDOWS_I686|" variables.mk
+        sed -i'' -E "s|^COMPILER_WINDOWS_X86_64=.*|COMPILER_WINDOWS_X86_64=$COMPILER_WINDOWS_X86_64|" variables.mk
+
+        sed -i'' -E "s|^COMPILER_FLAGS_HOST=.*|COMPILER_FLAGS_HOST=$COMPILER_FLAGS_HOST|" variables.mk
+        sed -i'' -E "s|^COMPILER_FLAGS_MAC=.*|COMPILER_FLAGS_MAC=$COMPILER_FLAGS_MAC|" variables.mk
+        sed -i'' -E "s|^COMPILER_FLAGS_MAC=LEGACY.*|COMPILER_FLAGS_MAC_LEGACY=$COMPILER_FLAGS_MAC_LEGACY|" variables.mk
+        sed -i'' -E "s|^COMPILER_FLAGS_WINDOWS_I686=.*|COMPILER_FLAGS_WINDOWS_I686=$COMPILER_FLAGS_WINDOWS_I686|" variables.mk
+        sed -i'' -E "s|^COMPILER_FLAGS_WINDOWS_X86_64=.*|COMPILER_FLAGS_WINDOWS_X86_64=$COMPILER_FLAGS_WINDOWS_X86_64|" variables.mk
+        sed -i'' -E "s|^COMPILER_FLAGS_LINUX_I386=.*|COMPILER_FLAGS_LINUX_I386=$COMPILER_FLAGS_LINUX_I386|" variables.mk
+
+        sed -i'' -E "s|^LDFLAGS_HOST=.*|LDFLAGS_HOST=$LDFLAGS_HOST|" variables.mk
+        sed -i'' -E "s|^LDFLAGS_MAC=.*|LDFLAGS_MAC=$LDFLAGS_MAC|" variables.mk
+        sed -i'' -E "s|^LDFLAGS_MAC_LEGACY=.*|LDFLAGS_MAC_LEGACY=$LDFLAGS_MAC_LEGACY|" variables.mk
+        sed -i'' -E "s|^LDFLAGS_WINDOWS_I686=.*|LDFLAGS_WINDOWS_I686=$LDFLAGS_WINDOWS_I686|" variables.mk
+        sed -i'' -E "s|^LDFLAGS_WINDOWS_X86_64=.*|LDFLAGS_WINDOWS_X86_64=$LDFLAGS_WINDOWS_X86_64|" variables.mk
+
+        sed -i'' -E "s|^STRIP_HOST=.*|STRIP_HOST=$STRIP_HOST|" variables.mk
+        sed -i'' -E "s|^STRIP_MAC=.*|STRIP_MAC=$STRIP_MAC|" variables.mk
+        sed -i'' -E "s|^STRIP_MAC=LEGACY.*|STRIP_MAC_LEGACY=$STRIP_MAC_LEGACY|" variables.mk
+        sed -i'' -E "s|^STRIP_WINDOWS_I686=.*|STRIP_WINDOWS_I686=$STRIP_WINDOWS_I686|" variables.mk
+        sed -i'' -E "s|^STRIP_WINDOWS_X86_64=.*|STRIP_WINDOWS_X86_64=$STRIP_WINDOWS_X86_64|" variables.mk
+
+        sed -i'' -E "s|^BUILD_DIR=.*|BUILD_DIR=$BUILD_DIR|" variables.mk
+
+        sed -i'' -E "s|^SHELL_SCRIPT_HOST=.*|SHELL_SCRIPT_HOST=$SHELL_SCRIPT_HOST|" variables.mk
+        sed -i'' -E "s|^SHELL_SCRIPT_MAC=.*|SHELL_SCRIPT_MAC=$SHELL_SCRIPT_MAC|" variables.mk
+        sed -i'' -E "s|^SHELL_SCRIPT_MAC_LEGACY=.*|SHELL_SCRIPT_MAC_LEGACY=$SHELL_SCRIPT_MAC_LEGACY|" variables.mk
+        sed -i'' -E "s|^SHELL_SCRIPT_WINDOWS_I686=.*|SHELL_SCRIPT_WINDOWS_I686=$SHELL_SCRIPT_WINDOWS_I686|" variables.mk
+        sed -i'' -E "s|^SHELL_SCRIPT_WINDOWS_X86_64=.*|SHELL_SCRIPT_WINDOWS_X86_64=$SHELL_SCRIPT_WINDOWS_X86_64|" variables.mk
+
+        echo -e "\nUpdated variables.mk."
+
+        # RPM
+        sed -i'' -E "s|your_executable|$PROGRAM|" ezre.spec
+        sed -i'' -E "s|License:*|License: $LICENSE|" ezre.spec
+        sed -i'' -E "s|Name:*|Name: $RELEASE_BASE_NAME|" ezre.spec
+        sed -i'' -E "s|Summary:*|Summary: $SOFTWARE_DESCRIPTION|" ezre.spec
+        sed -i'' -E "/%description/{n; s|^|$SOFTWARE_DESCRIPTION\n|;}" ezre.spec
+        # Add v for naming convention.
+        sed -i'' -E "s|Version:*|Version: v$VERSION|" ezre.spec
+        sed -i'' -E "s|URL:*|URL: $WEBSITE|" ezre.spec
+        sed -i'' -E "s|Packager:*|Packager: $YOUR_NAME|" ezre.spec
+
+        echo "Updated ezre.spec."
+
+        # DEB
+        sed -i'' -E "s|^Package:*|Package: $RELEASE_BASE_NAME|" control-i386
+        sed -i'' -E "s|Description:*|Description: $SOFTWARE_DESCRIPTION|" control-i386
+        sed -i'' -E "s|Version:*|Version: $VERSION|" control-i386
+        sed -i'' -E "s|Homepage:*|Homepage: $WEBSITE|" control-i386
+        sed -i'' -E "s|Maintainer:*|Maintainer: $YOUR_NAME|" control-i386
+
+        echo "Updated control-i386."
+
+        sed -i'' -E "s|^Package:*|Package: $RELEASE_BASE_NAME|" control-x86_64
+        sed -i'' -E "s|Description:*|Description: $SOFTWARE_DESCRIPTION|" control-x86_64
+        sed -i'' -E "s|Version:*|Version: $VERSION|" control-x86_64
+        sed -i'' -E "s|Homepage:*|Homepage: $WEBSITE|" control-x86_64
+        sed -i'' -E "s|Maintainer:*|Maintainer: $YOUR_NAME|" control-x86_64
+        echo "Updated control-x86_64."
+    fi
 else
     cp -v "$ezre_files"/variables.mk .
 fi
