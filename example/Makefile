@@ -1,4 +1,5 @@
-# This GNUMakefile is part of EzRe v1.1.1, see https://github.com/alex-free/ezre
+# This GNUMakefile is part of the EzRe build system v1.1.2.
+# https://github.com/alex-free/ezre
 
 include variables.mk
 
@@ -14,8 +15,8 @@ ifeq ($(strip $(COMPILER)),)
 endif
 
 # Append DEFINE VERSION flag. We do the others later after we build them up a bit more.
-COMPILER_FLAGS_HOST := $(COMPILER_FLAGS_HOST) -DVERSION=\""$(VERSION)"\"
-COMPILER_FLAGS_MAC := $(COMPILER_FLAGS_MAC) -DVERSION=\""$(VERSION)"\"
+COMPILER_FLAGS_HOST := $(COMPILER_FLAGS_HOST) -DVERSION=\"$(VERSION)\"
+COMPILER_FLAGS_MAC := $(COMPILER_FLAGS_MAC) -DVERSION=\"$(VERSION)\"
 
 # Optionals that need to be set to something (all others may be empty).
 
@@ -33,21 +34,21 @@ endif
 ifeq ($(strip $(COMPILER_FLAGS_MAC_LEGACY)),)
 	COMPILER_FLAGS_MAC_LEGACY := $(COMPILER_FLAGS_MAC)
 else
-	COMPILER_FLAGS_MAC_LEGACY := $(COMPILER_FLAGS_MAC_LEGACY) -DVERSION="$(VERSION)"
+	COMPILER_FLAGS_MAC_LEGACY := $(COMPILER_FLAGS_MAC_LEGACY) -DVERSION=\"$(VERSION)\"
 endif
 
 # If $(COMPILER_FLAGS_WINDOWS_I686) is not set, set it to $(COMPILER_FLAGS_HOST). If we do have custom COMPILER_FLAGS_WINDOWS_I686 we need to appened the DEFINE VERSION flag here now.
 ifeq ($(strip $(COMPILER_FLAGS_WINDOWS_I686)),)
 	COMPILER_FLAGS_WINDOWS_I686 := $(COMPILER_FLAGS_HOST)
 else
-	COMPILER_FLAGS_WINDOWS_I686 := $(COMPILER_FLAGS_WINDOWS_I686) -DVERSION="$(VERSION)"
+	COMPILER_FLAGS_WINDOWS_I686 := $(COMPILER_FLAGS_WINDOWS_I686) -DVERSION=\"$(VERSION)\"
 endif
 
 # If $(COMPILER_FLAGS_WINDOWS_X86_64) is not set, set it to $(COMPILER_FLAGS_HOST). If we do have custom COMPILER_FLAGS_WINDOWS_X86_64 we need to appened the DEFINE VERSION flag here now.
 ifeq ($(strip $(COMPILER_FLAGS_WINDOWS_X86_64)),)
 	COMPILER_FLAGS_WINDOWS_X86_64 := $(COMPILER_FLAGS_HOST)
 else
-	COMPILER_FLAGS_WINDOWS_X86_64 := $(COMPILER_FLAGS_HOST) -DVERSION="$(VERSION)"
+	COMPILER_FLAGS_WINDOWS_X86_64 := $(COMPILER_FLAGS_HOST) -DVERSION=\"$(VERSION)\"
 endif
 
 # If $(STRIP_MAC) is not set, set it to $(STRIP_HOST).
@@ -57,7 +58,7 @@ endif
 
 # If $(STRIP_MAC_LEGACY) is not set, set it to $(STRIP_MAC).
 ifeq ($(strip $(STRIP_MAC_LEGACY)),)
-	STRIP_MAC := $(STRIP_MAC)
+	STRIP_MAC_LEGACY := $(STRIP_MAC)
 endif
 
 # Go through all optional scripts, if any are not empty enable them for target compilation. If they are not enabled we simply set a "echo script not enabled" command to each disabled target script to prevent syntax errors with GNUMake from an unset variable. User never actually sees that!
@@ -104,7 +105,7 @@ endif
 
 # if you specify like make LEGACY=TRUE or make mac-os-release LEGACY=TRUE then you can get alternative COMPILER, CFLAGS, LDFLAGS, and STRIP values (very useful for i.e. PowerPC). If nothing is set set it to false.
 ifndef LEGACY
-override LEGACY=FALSE
+override LEGACY := FALSE
 endif
 
 $(PROGRAM): clean
@@ -127,24 +128,28 @@ ifeq ($(strip $(VERSION)),)
 	$(error Error: The $$VERSION variable is not set in variables.mk but is required)
 endif
 
-ifeq ($(strip $(LINUX_I386_RELEASE_NAME_SUFFIX)),)
-	$(error Error: The $$LINUX_I386_RELEASE_NAME_SUFFIX variable is not set in variables.mk but is required)
+ifeq ($(strip $(RELEASE_NAME_SUFFIX_LINUX_I386)),)
+	$(error Error: The $$RELEASE_NAME_SUFFIX_LINUX_I386 variable is not set in variables.mk but is required)
 endif
 
-ifeq ($(strip $(LINUX_X86_64_RELEASE_NAME_SUFFIX)),)
-	$(error Error: The $$LINUX_X86_64_RELEASE_NAME_SUFFIX variable is not set in variables.mk but is required)
+ifeq ($(strip $(RELEASE_NAME_SUFFIX_LINUX_X86_64)),)
+	$(error Error: The $$RELEASE_NAME_SUFFIX_LINUX_X86_64 variable is not set in variables.mk but is required)
 endif
 
-ifeq ($(strip $(WINDOWS_I686_RELEASE_NAME_SUFFIX)),)
-	$(error Error: The $$WINDOWS_I686_RELEASE_NAME_SUFFIX variable is not set in variables.mk but is required)
+ifeq ($(strip $(RELEASE_NAME_SUFFIX_WINDOWS_I686)),)
+	$(error Error: The $$RELEASE_NAME_SUFFIX_WINDOWS_I686 variable is not set in variables.mk but is required)
 endif
 
-ifeq ($(strip $(WINDOWS_X86_64_RELEASE_NAME_SUFFIX)),)
-	$(error Error: The $$WINDOWS_X86_64_RELEASE_NAME_SUFFIX variable is not set in variables.mk but is required)
+ifeq ($(strip $(RELEASE_NAME_SUFFIX_WINDOWS_X86_64)),)
+	$(error Error: The $$RELEASE_NAME_SUFFIX_WINDOWS_X86_64 variable is not set in variables.mk but is required)
 endif
 
-ifeq ($(strip $(MAC_OS_RELEASE_NAME_SUFFIX)),)
-	$(error Error: The $$MAC_OS_RELEASE_NAME_SUFFIX variable is not set in variables.mk but is required)
+ifeq ($(strip $(RELEASE_NAME_SUFFIX_MAC_OS)),)
+	$(error Error: The $$RELEASE_NAME_SUFFIX_MAC_OS variable is not set in variables.mk but is required)
+endif
+
+ifeq ($(strip $(RELEASE_NAME_SUFFIX_MAC_OS_LEGACY)),)
+	$(error Error: The $$RELEASE_NAME_SUFFIX_MAC_OS_LEGACY variable is not set in variables.mk but is required)
 endif
 
 # Check dependencies.
@@ -220,24 +225,29 @@ endif
 	fi
 
 	@if [ "$(shell uname)" = "Darwin" ] && [ "$(COMPILER)" != "$(COMPILER_WINDOWS_I686)" ] && [ "$(COMPILER)" != "$(COMPILER_WINDOWS_X86_64)" ] && [ "$(LEGACY)" = "FALSE" ]; then \
-		echo "$(COMPILER_MAC) "$(COMPILER_FLAGS_MAC)" $(SOURCE_FILES) "$(LDFLAGS_MAC)" -o $(BUILD_DIR)/$(EXECUTABLE_NAME)"; \
-		$(COMPILER_MAC) "$(COMPILER_FLAGS_MAC)" $(SOURCE_FILES) "$(LDFLAGS_MAC)" -o $(BUILD_DIR)/$(EXECUTABLE_NAME); \
+		echo "$(COMPILER_MAC) $(COMPILER_FLAGS_MAC) $(SOURCE_FILES) $(LDFLAGS_MAC) -o $(BUILD_DIR)/$(EXECUTABLE_NAME)"; \
+		$(COMPILER_MAC) $(COMPILER_FLAGS_MAC) $(SOURCE_FILES) $(LDFLAGS_MAC) -o $(BUILD_DIR)/$(EXECUTABLE_NAME); \
+		echo "$(STRIP_MAC) $(BUILD_DIR)/$(EXECUTABLE_NAME)"; \
 		$(STRIP_MAC) $(BUILD_DIR)/$(EXECUTABLE_NAME); \
 	elif [ "$(shell uname)" = "Darwin" ] && [ "$(COMPILER)" != "$(COMPILER_WINDOWS_I686)" ] && [ "$(COMPILER)" != "$(COMPILER_WINDOWS_X86_64)" ] && [ "$(LEGACY)" = "TRUE" ]; then \
 		echo "$(COMPILER_MAC_LEGACY) $(COMPILER_FLAGS_MAC_LEGACY) $(SOURCE_FILES) $(LDFLAGS_MAC_LEGACY) -o $(BUILD_DIR)/$(EXECUTABLE_NAME)"; \
-		$(COMPILER_MAC_LEGACY) "$(COMPILER_FLAGS_MAC_LEGACY)" $(SOURCE_FILES) "$(LDFLAGS_MAC_LEGACY)" -o $(BUILD_DIR)/$(EXECUTABLE_NAME); \
+		$(COMPILER_MAC_LEGACY) $(COMPILER_FLAGS_MAC_LEGACY) $(SOURCE_FILES) $(LDFLAGS_MAC_LEGACY) -o $(BUILD_DIR)/$(EXECUTABLE_NAME); \
+		echo "$(STRIP_MAC_LEGACY) $(BUILD_DIR)/$(EXECUTABLE_NAME)"; \
 		$(STRIP_MAC_LEGACY) $(BUILD_DIR)/$(EXECUTABLE_NAME); \
 	elif [ "$(COMPILER)" == "$(COMPILER_WINDOWS_I686)" ]; then \
 		echo "$(COMPILER_WINDOWS_I686) $(COMPILER_FLAGS_WINDOWS_I686) $(SOURCE_FILES) $(LDFLAGS_WINDOWS_I686) -o $(BUILD_DIR)/$(EXECUTABLE_NAME)"; \
 		$(COMPILER_WINDOWS_I686) $(COMPILER_FLAGS_WINDOWS_I686) $(SOURCE_FILES) $(LDFLAGS_WINDOWS_I686) -o $(BUILD_DIR)/$(EXECUTABLE_NAME); \
+		echo "$(STRIP_WINDOWS_I686) $(BUILD_DIR)/$(EXECUTABLE_NAME)"; \
 		$(STRIP_WINDOWS_I686) $(BUILD_DIR)/$(EXECUTABLE_NAME); \
 	elif [ "$(COMPILER)" == "$(COMPILER_WINDOWS_X86_64)" ]; then \
 		echo "$(COMPILER_WINDOWS_X86_64) $(COMPILER_FLAGS_WINDOWS_X86_64) $(SOURCE_FILES) $(LDFLAGS_WINDOWS_X86_64) -o $(BUILD_DIR)/$(EXECUTABLE_NAME)"; \
 		$(COMPILER_WINDOWS_X86_64) $(COMPILER_FLAGS_WINDOWS_X86_64) $(SOURCE_FILES) $(LDFLAGS_WINDOWS_X86_64) -o $(BUILD_DIR)/$(EXECUTABLE_NAME); \
+		echo "$(STRIP_WINDOWS_X86_64) $(BUILD_DIR)/$(EXECUTABLE_NAME)"; \
 		$(STRIP_WINDOWS_X86_64) $(BUILD_DIR)/$(EXECUTABLE_NAME); \
 	else \
 		echo "$(COMPILER_HOST) "$(COMPILER_FLAGS_HOST)" $(SOURCE_FILES) "$(LDFLAGS_HOST)" -o $(BUILD_DIR)/$(EXECUTABLE_NAME)"; \
 		$(COMPILER_HOST) $(COMPILER_FLAGS_HOST) $(SOURCE_FILES) $(LDFLAGS_HOST) -o $(BUILD_DIR)/$(EXECUTABLE_NAME); \
+		echo "$(STRIP_HOST) $(BUILD_DIR)/$(EXECUTABLE_NAME)"; \
 		$(STRIP_HOST) $(BUILD_DIR)/$(EXECUTABLE_NAME); \
 	fi
 
@@ -291,7 +301,11 @@ windows-x86_64: clean
 
 .PHONY: mac-os
 mac-os: clean
+ifeq ($(strip $(LEGACY)),TRUE)
+	make $(PROGRAM) COMPILER=$(COMPILER_MAC) EXECUTABLE_NAME='$(PROGRAM).$(shell uname -p)'
+else
 	make $(PROGRAM) COMPILER=$(COMPILER_MAC) EXECUTABLE_NAME='$(PROGRAM).$(shell uname -m)'
+endif
 
 .PHONY: release
 release:
@@ -310,45 +324,49 @@ endif
 
 .PHONY: linux-i386-release
 linux-i386-release: linux-i386
-	make release PLATFORM='$(LINUX_I386_RELEASE_NAME_SUFFIX)' EXECUTABLE_NAME='$(PROGRAM).i386'
+	make release PLATFORM='$(RELEASE_NAME_SUFFIX_LINUX_I386)' EXECUTABLE_NAME='$(PROGRAM).i386'
 
 .PHONY: linux-x86_64-release
 linux-x86_64-release: linux-x86_64
-	make release PLATFORM='$(LINUX_X86_64_RELEASE_NAME_SUFFIX)' EXECUTABLE_NAME='$(PROGRAM).x86_64'
+	make release PLATFORM='$(RELEASE_NAME_SUFFIX_LINUX_X86_64)' EXECUTABLE_NAME='$(PROGRAM).x86_64'
 
 .PHONY: windows-i686-release
 windows-i686-release: windows-i686
-	make release PLATFORM='$(WINDOWS_I686_RELEASE_NAME_SUFFIX)' EXECUTABLE_NAME='$(PROGRAM).i686.exe' WINDOWS_RELEASE=true
+	make release PLATFORM='$(RELEASE_NAME_SUFFIX_WINDOWS_I686)' EXECUTABLE_NAME='$(PROGRAM).i686.exe' WINDOWS_RELEASE=true
 
 .PHONY: windows-x86_64-release
 windows-x86_64-release: windows-x86_64
-	make release PLATFORM='$(WINDOWS_X86_64_RELEASE_NAME_SUFFIX)' EXECUTABLE_NAME='$(PROGRAM).x86_64.exe' WINDOWS_RELEASE=true
+	make release PLATFORM='$(RELEASE_NAME_SUFFIX_WINDOWS_X86_64)' EXECUTABLE_NAME='$(PROGRAM).x86_64.exe' WINDOWS_RELEASE=true
 
 .PHONY: mac-os-release
 mac-os-release: mac-os
-	make release PLATFORM='$(MAC_OS_RELEASE_NAME_SUFFIX)' EXECUTABLE_NAME='$(PROGRAM).$(shell uname -m)'
+ifeq ($(strip $(LEGACY)),TRUE)
+	make release PLATFORM='$(RELEASE_NAME_SUFFIX_MAC_OS_LEGACY)' EXECUTABLE_NAME='$(PROGRAM).$(shell uname -p)'
+else
+	make release PLATFORM='$(RELEASE_NAME_SUFFIX_MAC_OS)' EXECUTABLE_NAME='$(PROGRAM).$(shell uname -m)'
+endif
 
 .PHONY: linux-i386-deb
 linux-i386-deb: linux-i386
-	rm -rf $(BUILD_DIR)/$(RELEASE_BASE_NAME)-$(VERSION)-$(LINUX_I386_RELEASE_NAME_SUFFIX)
-	mkdir -p $(BUILD_DIR)/$(RELEASE_BASE_NAME)-$(VERSION)-$(LINUX_I386_RELEASE_NAME_SUFFIX)/usr/bin
-	mkdir -p $(BUILD_DIR)/$(RELEASE_BASE_NAME)-$(VERSION)-$(LINUX_I386_RELEASE_NAME_SUFFIX)/DEBIAN
+	rm -rf $(BUILD_DIR)/$(RELEASE_BASE_NAME)-$(VERSION)-$(RELEASE_NAME_SUFFIX_LINUX_I386)
+	mkdir -p $(BUILD_DIR)/$(RELEASE_BASE_NAME)-$(VERSION)-$(RELEASE_NAME_SUFFIX_LINUX_I386)/usr/bin
+	mkdir -p $(BUILD_DIR)/$(RELEASE_BASE_NAME)-$(VERSION)-$(RELEASE_NAME_SUFFIX_LINUX_I386)/DEBIAN
 	cp $(BUILD_DIR)/$(EXECUTABLE_NAME) $(BUILD_DIR)/$(PROGRAM)
-	cp $(BUILD_DIR)/$(PROGRAM) $(BUILD_DIR)/$(RELEASE_BASE_NAME)-$(VERSION)-$(LINUX_I386_RELEASE_NAME_SUFFIX)/usr/bin
-	cp control-i386 $(BUILD_DIR)/$(RELEASE_BASE_NAME)-$(VERSION)-$(LINUX_I386_RELEASE_NAME_SUFFIX)/DEBIAN/control
-	dpkg-deb --build $(BUILD_DIR)/$(RELEASE_BASE_NAME)-$(VERSION)-$(LINUX_I386_RELEASE_NAME_SUFFIX)
-	rm -rf $(BUILD_DIR)/$(RELEASE_BASE_NAME)-$(VERSION)-$(LINUX_I386_RELEASE_NAME_SUFFIX)
+	cp $(BUILD_DIR)/$(PROGRAM) $(BUILD_DIR)/$(RELEASE_BASE_NAME)-$(VERSION)-$(RELEASE_NAME_SUFFIX_LINUX_I386)/usr/bin
+	cp control-i386 $(BUILD_DIR)/$(RELEASE_BASE_NAME)-$(VERSION)-$(RELEASE_NAME_SUFFIX_LINUX_I386)/DEBIAN/control
+	dpkg-deb --build $(BUILD_DIR)/$(RELEASE_BASE_NAME)-$(VERSION)-$(RELEASE_NAME_SUFFIX_LINUX_I386)
+	rm -rf $(BUILD_DIR)/$(RELEASE_BASE_NAME)-$(VERSION)-$(RELEASE_NAME_SUFFIX_LINUX_I386)
 
 .PHONY: linux-x86_64-deb
 linux-x86_64-deb: linux-x86_64
-	rm -rf $(BUILD_DIR)/$(RELEASE_BASE_NAME)-$(VERSION)-$(LINUX_X86_64_RELEASE_NAME_SUFFIX)
-	mkdir -p $(BUILD_DIR)/$(RELEASE_BASE_NAME)-$(VERSION)-$(LINUX_X86_64_RELEASE_NAME_SUFFIX)/usr/bin
-	mkdir -p $(BUILD_DIR)/$(RELEASE_BASE_NAME)-$(VERSION)-$(LINUX_X86_64_RELEASE_NAME_SUFFIX)/DEBIAN
+	rm -rf $(BUILD_DIR)/$(RELEASE_BASE_NAME)-$(VERSION)-$(RELEASE_NAME_SUFFIX_LINUX_X86_64)
+	mkdir -p $(BUILD_DIR)/$(RELEASE_BASE_NAME)-$(VERSION)-$(RELEASE_NAME_SUFFIX_LINUX_X86_64)/usr/bin
+	mkdir -p $(BUILD_DIR)/$(RELEASE_BASE_NAME)-$(VERSION)-$(RELEASE_NAME_SUFFIX_LINUX_X86_64)/DEBIAN
 	cp $(BUILD_DIR)/$(EXECUTABLE_NAME) $(BUILD_DIR)/$(PROGRAM)
-	cp $(BUILD_DIR)/$(PROGRAM) $(BUILD_DIR)/$(RELEASE_BASE_NAME)-$(VERSION)-$(LINUX_X86_64_RELEASE_NAME_SUFFIX)/usr/bin
-	cp control-x86_64 $(BUILD_DIR)/$(RELEASE_BASE_NAME)-$(VERSION)-$(LINUX_X86_64_RELEASE_NAME_SUFFIX)/DEBIAN/control
-	dpkg-deb --build $(BUILD_DIR)/$(RELEASE_BASE_NAME)-$(VERSION)-$(LINUX_X86_64_RELEASE_NAME_SUFFIX)
-	rm -rf $(BUILD_DIR)/$(RELEASE_BASE_NAME)-$(VERSION)-$(LINUX_X86_64_RELEASE_NAME_SUFFIX)
+	cp $(BUILD_DIR)/$(PROGRAM) $(BUILD_DIR)/$(RELEASE_BASE_NAME)-$(VERSION)-$(RELEASE_NAME_SUFFIX_LINUX_X86_64)/usr/bin
+	cp control-x86_64 $(BUILD_DIR)/$(RELEASE_BASE_NAME)-$(VERSION)-$(RELEASE_NAME_SUFFIX_LINUX_X86_64)/DEBIAN/control
+	dpkg-deb --build $(BUILD_DIR)/$(RELEASE_BASE_NAME)-$(VERSION)-$(RELEASE_NAME_SUFFIX_LINUX_X86_64)
+	rm -rf $(BUILD_DIR)/$(RELEASE_BASE_NAME)-$(VERSION)-$(RELEASE_NAME_SUFFIX_LINUX_X86_64)
 
 .PHONY: linux-i386-rpm
 linux-i386-rpm: linux-i386

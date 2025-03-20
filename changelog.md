@@ -1,5 +1,29 @@
 # [EzRe](readme.md) -> Changelog
 
+## Version 1.1.1 (3/16/2025)
+
+Changes:
+
+* Fixed updating version with `ezre -u <version>`. This now also updates `variables.mk` for you.
+
+* Rewrote GNU Sed vs BSD Sed handling.
+
+* Improved EzRe's [build](https://github.com/alex-free/ezre/blob/master/build) script. The build script for EzRe itself is insanely useful for releasing bash scripts in the same vain that EzRe is to releasing C and C++ programs!
+
+* Added support for older RPM versions, such as 4.4.9 which ships with MacPorts. This was done by simply adding a `Group: Unspecified` field to the spec files.
+
+* Specifies `--define "_tmppath $PWD/rpm-tmp"` when building rpm packages for compatibility with older RPM versions and Mac OS X.
+
+---------------------------------------------
+
+* [ezre-v1.1.1.zip](https://github.com/alex-free/ezre/releases/download/v1.1.1/ezre-v1.1.1.zip) _Portable zip release for Linux and Mac OS_
+
+* [ezre-v1.1.1.deb](https://github.com/alex-free/ezre/releases/download/v1.1.1/ezre-v1.1.1.deb) _Deb package for Linux_
+
+* [ezre-v1.1.1-1.noarch.rpm](https://github.com/alex-free/ezre/releases/download/v1.1.1/ezre-v1.1.1-1.noarch.rpm) _RPM package for Linux_
+
+---------------------------------------------
+
 ## Version 1.1.0 (3/15/2025)
 
 Changes:

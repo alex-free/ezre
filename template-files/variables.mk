@@ -1,4 +1,5 @@
-# EzRe GNUMakefile Variables
+# This variables.mk file is part of the EzRe build system v1.1.2.
+# https://github.com/alex-free/ezre
 
 # REQUIRED: executable name in release (.exe file extension is appended for Windows builds). I.e. hello.
 PROGRAM=
@@ -10,11 +11,14 @@ SOURCE_FILES=
 # REQUIRED: Basename of all release files (.zip, .deb). I.e. hello-world.
 RELEASE_BASE_NAME=
 # REQUIRED: Appended to end of release file name. Release file format is $(RELEASE_BASE_NAME)-$(VERSION)-$(RELEASE_NAME_SUFFIX).
-LINUX_I386_RELEASE_NAME_SUFFIX=linux-i386-static
-LINUX_X86_64_RELEASE_NAME_SUFFIX=linux-x86_64-static
-WINDOWS_I686_RELEASE_NAME_SUFFIX=windows-i686-static
-WINDOWS_X86_64_RELEASE_NAME_SUFFIX=windows-x86_64-static
-MAC_OS_RELEASE_NAME_SUFFIX=mac-os-$(shell uname -m)
+RELEASE_NAME_SUFFIX_LINUX_I386=linux-i386-static
+RELEASE_NAME_SUFFIX_LINUX_X86_64=linux-x86_64-static
+RELEASE_NAME_SUFFIX_WINDOWS_I686=windows-i686-static
+RELEASE_NAME_SUFFIX_WINDOWS_X86_64=windows-x86_64-static
+# Because uname -m = Power Macintosh, etc on 10.4. On 10.12 it is x86_64
+RELEASE_NAME_SUFFIX_MAC_OS=mac-os-$(shell uname -m)
+# Because uname -p = powerpc, etc. on 10.4. On 10.12 it is i386.
+RELEASE_NAME_SUFFIX_MAC_OS_LEGACY=mac-os-$(shell uname -p)
 # OPTIONAL: additional files included in all zip releases. I.e. readme.md.
 RELEASE_FILES=
 
