@@ -3,7 +3,7 @@
 script_dir=$(dirname "$0")
 ezre_files=""$script_dir"/template-files"
 answered_yes=false
-version=1.1.2
+version=1.1.3
 
 echo -e "EzRe v"$version"\n(C) 2023-2025, Alex Free (3-BSD)\n"
 
@@ -174,6 +174,7 @@ if [ -e "variables.mk" ]; then
         sed -i '' -E "s|^BUILD_DIR=.*|BUILD_DIR=$BUILD_DIR|" variables.mk
 
         sed -i '' -E "s|^SHELL_SCRIPT_HOST=.*|SHELL_SCRIPT_HOST=$SHELL_SCRIPT_HOST|" variables.mk
+        sed -i '' -E "s|^SHELL_SCRIPT_HOST_32_BIT=.*|SHELL_SCRIPT_HOST_32_BIT=$SHELL_SCRIPT_HOST_32_BIT|" variables.mk
         sed -i '' -E "s|^SHELL_SCRIPT_MAC=.*|SHELL_SCRIPT_MAC=$SHELL_SCRIPT_MAC|" variables.mk
         sed -i '' -E "s|^SHELL_SCRIPT_MAC_LEGACY=.*|SHELL_SCRIPT_MAC_LEGACY=$SHELL_SCRIPT_MAC_LEGACY|" variables.mk
         sed -i '' -E "s|^SHELL_SCRIPT_WINDOWS_I686=.*|SHELL_SCRIPT_WINDOWS_I686=$SHELL_SCRIPT_WINDOWS_I686|" variables.mk
@@ -254,6 +255,7 @@ if [ -e "variables.mk" ]; then
         sed -i'' -E "s|^BUILD_DIR=.*|BUILD_DIR=$BUILD_DIR|" variables.mk
 
         sed -i'' -E "s|^SHELL_SCRIPT_HOST=.*|SHELL_SCRIPT_HOST=$SHELL_SCRIPT_HOST|" variables.mk
+        sed -i'' -E "s|^SHELL_SCRIPT_HOST_32_BIT=.*|SHELL_SCRIPT_HOST_32_BIT=$SHELL_SCRIPT_HOST_32_BIT|" variables.mk
         sed -i'' -E "s|^SHELL_SCRIPT_MAC=.*|SHELL_SCRIPT_MAC=$SHELL_SCRIPT_MAC|" variables.mk
         sed -i'' -E "s|^SHELL_SCRIPT_MAC_LEGACY=.*|SHELL_SCRIPT_MAC_LEGACY=$SHELL_SCRIPT_MAC_LEGACY|" variables.mk
         sed -i'' -E "s|^SHELL_SCRIPT_WINDOWS_I686=.*|SHELL_SCRIPT_WINDOWS_I686=$SHELL_SCRIPT_WINDOWS_I686|" variables.mk

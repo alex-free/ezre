@@ -1,4 +1,4 @@
-# This variables.mk file is part of the EzRe build system v1.1.2.
+# This variables.mk file is part of the EzRe build system v1.1.3.
 # https://github.com/alex-free/ezre
 
 # REQUIRED: executable name in release (.exe file extension is appended for Windows builds). I.e. hello.
@@ -78,8 +78,9 @@ STRIP_WINDOWS_X86_64=x86_64-w64-mingw32-strip
 BUILD_DIR=build
 
 # OPTIONAL: Execute a script or set of commands before compiling each target.
-SHELL_SCRIPT_HOST=echo a script can run here; echo or you can just chain commands directly in the var like this
-SHELL_SCRIPT_MAC=
-SHELL_SCRIPT_MAC_LEGACY=
-SHELL_SCRIPT_WINDOWS_I686=
-SHELL_SCRIPT_WINDOWS_X86_64=
+SHELL_SCRIPT_HOST=./example-script-host
+SHELL_SCRIPT_HOST_32_BIT=./example-script-host-32-bit
+SHELL_SCRIPT_MAC=./example-script-mac
+SHELL_SCRIPT_MAC_LEGACY=./example-script-mac-legacy
+SHELL_SCRIPT_WINDOWS_I686=./example-script-windows-i686
+SHELL_SCRIPT_WINDOWS_X86_64=./example-script-windows-x86_64

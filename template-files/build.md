@@ -7,6 +7,8 @@ This software is built with the [EZRE](https://github.com/alex-free/ezre) build 
 
 `make` - creates an executable for the host system.
 
+`make LEGACY=TRUE` - creates an executable using alternative flags, only for Mac OS hosts.
+
 `make clean` - deletes only the generated executable file created by only executing `make`.
 
 `make windows-i686-release` - generate a portable Windows i686 release .zip file for Windows 95 OSR 2.5 and above. Pentium or newer required.
@@ -14,6 +16,8 @@ This software is built with the [EZRE](https://github.com/alex-free/ezre) build 
 `make windows-x86_64-release` - generate a portable Windows x86_64 release .zip file for all 64 bit Windows versions.
 
 `make mac-os-release` - generate a portable Mac OS release .zip file (your current architecture by default). In general any newer Mac OS version that is the same as yours or newer will work with the built executable, with 2 executions. Mac OS 10.15 and newer can't run support x86 32 bit executables. Mac OS X 10.7 and newer can not run PowerPC executables. 
+
+`make mac-os-release LEGACY=TRUE` - generate a portable Mac OS release .zip file (using alternative flags, intended for allowing for a second alternative Mac build). In general any newer Mac OS version that is the same as the target of the LEGACY alt flags or newer will work with the built executable, with 2 executions. Mac OS 10.15 and newer can't run support x86 32 bit executables. Mac OS X 10.7 and newer can not run PowerPC executables. 
 
 `make mac-os-release LEGACY=TRUE` - generate a portable Mac OS release .zip file (same as above can apply alternative values for i.e. PowerPC and or older Mac OS versions).
 

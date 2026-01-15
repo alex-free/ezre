@@ -1,4 +1,4 @@
-# This variables.mk file is part of the EzRe build system v1.1.2.
+# This variables.mk file is part of the EzRe build system v1.1.3.
 # https://github.com/alex-free/ezre
 
 # REQUIRED: executable name in release (.exe file extension is appended for Windows builds). I.e. hello.
@@ -79,6 +79,7 @@ BUILD_DIR=build
 
 # OPTIONAL: Execute a script or set of commands before compiling each target.
 SHELL_SCRIPT_HOST=
+SHELL_SCRIPT_HOST_32_BIT=
 SHELL_SCRIPT_MAC=
 SHELL_SCRIPT_MAC_LEGACY=
 SHELL_SCRIPT_WINDOWS_I686=

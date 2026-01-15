@@ -40,23 +40,23 @@ Do you hate writing GNU Makefiles, but love the simplicity and portability they 
 
 ## Downloads
 
-### Version 1.1.2 (3/20/2025)
+### Version 1.1.3 (1/14/2026)
 
 Changes:
 
-* Improved `-DVERSION` handling.
+* Fixed `make LEGACY=TRUE` for Mac OS alternative flags.
 
-* Fixed/finalized Mac OS `LEGACY=TRUE` target.
+* When compiling for 32 bit on host (i.e. Linux), you can now set an alternative script by setting `SHELL_SCRIPT_HOST_32_BIT` to one different then `SHELL_SCRIPT_HOST`.
 
-* Now displays the strip command during compilation.
+* Improved `example.c`.
 
 ---------------------------------------------
 
-* [ezre-v1.1.2.zip](https://github.com/alex-free/ezre/releases/download/v1.1.2/ezre-v1.1.2.zip) _Portable zip release for Linux and Mac OS_
+* [ezre-v1.1.3.zip](https://github.com/alex-free/ezre/releases/download/v1.1.3/ezre-v1.1.3.zip) _Portable zip release for Linux and Mac OS_
 
-* [ezre-v1.1.2.deb](https://github.com/alex-free/ezre/releases/download/v1.1.2/ezre-v1.1.2.deb) _Deb package for Linux_
+* [ezre-v1.1.3.deb](https://github.com/alex-free/ezre/releases/download/v1.1.3/ezre-v1.1.3.deb) _Deb package for Linux_
 
-* [ezre-v1.1.2-1.noarch.rpm](https://github.com/alex-free/ezre/releases/download/v1.1.2/ezre-v1.1.2-1.noarch.rpm) _RPM package for Linux_
+* [ezre-v1.1.3-1.noarch.rpm](https://github.com/alex-free/ezre/releases/download/v1.1.3/ezre-v1.1.3-1.noarch.rpm) _RPM package for Linux_
 
 ---------------------------------------------
 

@@ -1,5 +1,25 @@
 # [EzRe](readme.md) -> Changelog
 
+## Version 1.1.2 (3/20/2025)
+
+Changes:
+
+* Improved `-DVERSION` handling.
+
+* Fixed/finalized Mac OS `LEGACY=TRUE` target.
+
+* Now displays the strip command during compilation.
+
+---------------------------------------------
+
+* [ezre-v1.1.2.zip](https://github.com/alex-free/ezre/releases/download/v1.1.2/ezre-v1.1.2.zip) _Portable zip release for Linux and Mac OS_
+
+* [ezre-v1.1.2.deb](https://github.com/alex-free/ezre/releases/download/v1.1.2/ezre-v1.1.2.deb) _Deb package for Linux_
+
+* [ezre-v1.1.2-1.noarch.rpm](https://github.com/alex-free/ezre/releases/download/v1.1.2/ezre-v1.1.2-1.noarch.rpm) _RPM package for Linux_
+
+---------------------------------------------
+
 ## Version 1.1.1 (3/16/2025)
 
 Changes:

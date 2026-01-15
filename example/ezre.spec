@@ -8,8 +8,7 @@ Packager: Alex Free
 Group: Unspecified
 
 %description
-Hello world example for EzRe.
-
+Hello world example for EzRe.n
 %install
 mkdir -p %{buildroot}/usr/bin
 cp %{_sourcedir}/hello %{buildroot}/usr/bin/
