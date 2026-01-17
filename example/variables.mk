@@ -1,4 +1,4 @@
-# This variables.mk file is part of the EzRe build system v1.1.4.
+# This variables.mk file is part of the EzRe build system v1.1.5.
 # https://github.com/alex-free/ezre
 
 # REQUIRED: executable name in release (.exe file extension is appended for Windows builds). I.e. hello.

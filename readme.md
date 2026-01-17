@@ -40,25 +40,19 @@ Do you hate writing GNU Makefiles, but love the simplicity and portability they 
 
 ## Downloads
 
-### Version 1.1.4 (1/16/2026)
+### Version 1.1.5 (1/16/2026)
 
 Changes:
 
-* Internal variable change. Linux->Host (makes more sense when used on other nix platforms). X86_64->64. I386->32.
-
-* Fixed Host 32 bit build.
-
-* Updated build.md.
-
-* Added HOST_32_BIT* variables for custom CFLAGS, LDFLAGS, and COMPILER for 32 bit builds.
+* Fix SHELL_SCRIPT_HOST_32_BIT.
 
 ---------------------------------------------
 
-* [ezre-v1.1.4.zip](https://github.com/alex-free/ezre/releases/download/v1.1.4/ezre-v1.1.4.zip) _Portable zip release for Linux and Mac OS_
+* [ezre-v1.1.5.zip](https://github.com/alex-free/ezre/releases/download/v1.1.5/ezre-v1.1.5.zip) _Portable zip release for Linux and Mac OS_
 
-* [ezre-v1.1.4.deb](https://github.com/alex-free/ezre/releases/download/v1.1.4/ezre-v1.1.4.deb) _Deb package for Linux_
+* [ezre-v1.1.5.deb](https://github.com/alex-free/ezre/releases/download/v1.1.5/ezre-v1.1.5.deb) _Deb package for Linux_
 
-* [ezre-v1.1.4-1.noarch.rpm](https://github.com/alex-free/ezre/releases/download/v1.1.4/ezre-v1.1.4-1.noarch.rpm) _RPM package for Linux_
+* [ezre-v1.1.5-1.noarch.rpm](https://github.com/alex-free/ezre/releases/download/v1.1.5/ezre-v1.1.5-1.noarch.rpm) _RPM package for Linux_
 
 ---------------------------------------------
 

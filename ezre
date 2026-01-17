@@ -3,7 +3,7 @@
 script_dir=$(dirname "$0")
 ezre_files=""$script_dir"/template-files"
 answered_yes=false
-version=1.1.4
+version=1.1.5
 
 echo -e "EzRe v"$version"\n(C) 2023-2025, Alex Free (3-BSD)\n"
 

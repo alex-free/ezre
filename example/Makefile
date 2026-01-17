@@ -1,4 +1,4 @@
-# This GNUMakefile is part of the EzRe build system v1.1.4.
+# This GNUMakefile is part of the EzRe build system v1.1.5.
 # https://github.com/alex-free/ezre
 
 include variables.mk
@@ -240,11 +240,11 @@ endif
 		$(SHELL_SCRIPT_MAC); \
 	elif [ "$(shell uname)" = "Darwin" ] && [ "$(COMPILER)" != "$(COMPILER_WINDOWS_I686)" ] && [ "$(COMPILER)" != "$(COMPILER_WINDOWS_X86_64)" ] && [ "$(LEGACY)" = "TRUE" ] && [ "$(SHELL_SCRIPT_MAC_LEGACY_ENABLE)" = "TRUE" ]; then \
 		$(SHELL_SCRIPT_MAC_LEGACY); \
-	elif [ "$(COMPILER)" == "$(COMPILER_WINDOWS_I686)" ] && [ "$(SHELL_SCRIPT_WINDOWS_I686_ENABLE)" = "TRUE" ]; then \
+	elif [ "$(COMPILER)" = "$(COMPILER_WINDOWS_I686)" ] && [ "$(SHELL_SCRIPT_WINDOWS_I686_ENABLE)" = "TRUE" ]; then \
 		$(SHELL_SCRIPT_WINDOWS_I686); \
-	elif [ "$(COMPILER)" == "$(COMPILER_WINDOWS_X86_64)" ] && [ "$(SHELL_SCRIPT_WINDOWS_X86_64_ENABLE)" = "TRUE" ]; then \
+	elif [ "$(COMPILER)" = "$(COMPILER_WINDOWS_X86_64)" ] && [ "$(SHELL_SCRIPT_WINDOWS_X86_64_ENABLE)" = "TRUE" ]; then \
 		$(SHELL_SCRIPT_WINDOWS_X86_64); \
-	elif [ "$(COMPILER_FLAGS)" != "$${COMPILER_FLAGS#*-m32*}" ] && [ "$(SHELL_SCRIPT_HOST_32_BIT_ENABLE)" = "TRUE" ]; then \
+		elif [ "$(32_BIT_BUILD)" = "TRUE" ] && [ "$(SHELL_SCRIPT_HOST_32_BIT_ENABLE)" = "TRUE" ]; then \
 		$(SHELL_SCRIPT_HOST_32_BIT); \
 	elif [ "$(SHELL_SCRIPT_HOST_ENABLE)" = "TRUE" ]; then \
 		$(SHELL_SCRIPT_HOST); \
