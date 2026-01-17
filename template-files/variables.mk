@@ -1,4 +1,4 @@
-# This variables.mk file is part of the EzRe build system v1.1.3.
+# This variables.mk file is part of the EzRe build system v1.1.4.
 # https://github.com/alex-free/ezre
 
 # REQUIRED: executable name in release (.exe file extension is appended for Windows builds). I.e. hello.
@@ -11,8 +11,8 @@ SOURCE_FILES=
 # REQUIRED: Basename of all release files (.zip, .deb). I.e. hello-world.
 RELEASE_BASE_NAME=
 # REQUIRED: Appended to end of release file name. Release file format is $(RELEASE_BASE_NAME)-$(VERSION)-$(RELEASE_NAME_SUFFIX).
-RELEASE_NAME_SUFFIX_LINUX_I386=linux-i386-static
-RELEASE_NAME_SUFFIX_LINUX_X86_64=linux-x86_64-static
+RELEASE_NAME_SUFFIX_HOST_32=linux-i386-static
+RELEASE_NAME_SUFFIX_HOST=linux-x86_64-static
 RELEASE_NAME_SUFFIX_WINDOWS_I686=windows-i686-static
 RELEASE_NAME_SUFFIX_WINDOWS_X86_64=windows-x86_64-static
 # Because uname -m = Power Macintosh, etc on 10.4. On 10.12 it is x86_64
@@ -38,6 +38,8 @@ BUILD_DEPENDS_MACPORTS=mingw-w64
 
 # REQUIRED: Host system compiler. gcc for c. g++ for C++.
 COMPILER_HOST=gcc
+# OPTIONAL: Alternative 32 bit host compiler. Otherwise set to $(COMPILER_HOST).
+COMPILER_HOST_32_BIT=
 # OPTIONAL: Alternative Mac OS compiler. Otherwise set to $(COMPILER_HOST).
 COMPILER_MAC=
 # OPTIONAL: Alternative Mac OS compiler if LEGACY=TRUE. Otherwise set to $(COMPILER_HOST).
@@ -48,16 +50,16 @@ COMPILER_WINDOWS_I686=i686-w64-mingw32-$(COMPILER_HOST)
 COMPILER_WINDOWS_X86_64=x86_64-w64-mingw32-$(COMPILER_HOST)
 
 # REQUIRED: compiler flags used to compile $(SOURCE_FILES). To make a C/C++ program portable, you probably at least want `-static` as shown below. I like using `-Wall -Wextra -Werror -pedantic -static` or some variation. We can't use `-static` on Mac OS though. COMPILER_FLAGS_MAC_LEGACY is provided for i.e. PowerPC specific flags (-arch ppc, whatever).
-COMPILER_FLAGS_HOST=-Wall -Wextra -Werror -pedantic -static
-COMPILER_FLAGS_MAC=-Wall -Wextra -Werror -pedantic
+COMPILER_FLAGS_HOST=-static
+COMPILER_FLAGS_HOST_32_BIT=-m32 -static
+COMPILER_FLAGS_MAC=
 COMPILER_FLAGS_MAC_LEGACY=
 COMPILER_FLAGS_WINDOWS_I686=
 COMPILER_FLAGS_WINDOWS_X86_64=
-# REQUIRED: compiler flag appended to $(COMPILER_FLAGS) to compile $(SOURCE_FILES) for Linux x86 builds. This tells GCC to build i386 code on an x86_64 system.
-COMPILER_FLAGS_LINUX_I386=-m32
 
 # OPTIONAL: LDFlags.
 LDFLAGS_HOST=
+LDFLAGS_HOST_32_BIT=
 LDFLAGS_MAC=
 LDFLAGS_MAC_LEGACY=
 LDFLAGS_WINDOWS_I686=
@@ -65,7 +67,9 @@ LDFLAGS_WINDOWS_X86_64=
 
 # REQUIRED: Host system strip.
 STRIP_HOST=strip
-# OPTIONAL: alt strip for Mac OS. If not set defaults to $(STRIP)
+# OPTIONAL: alt strip for 32 bit host. If not set defaults to $(STRIP_HOST)
+STRIP_HOST_32_BIT=
+# OPTIONAL: alt strip for Mac OS. If not set defaults to $(STRIP_HOST)
 STRIP_MAC=
 # OPTIONAL: alt strip for Mac OS if LEGACY=TRUE is defined. If not set defaults to $(STRIP)
 STRIP_MAC_LEGACY=

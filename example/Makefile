@@ -1,4 +1,4 @@
-# This GNUMakefile is part of the EzRe build system v1.1.3.
+# This GNUMakefile is part of the EzRe build system v1.1.4.
 # https://github.com/alex-free/ezre
 
 include variables.mk
@@ -19,6 +19,11 @@ COMPILER_FLAGS_HOST := $(COMPILER_FLAGS_HOST) -DVERSION=\"$(VERSION)\"
 COMPILER_FLAGS_MAC := $(COMPILER_FLAGS_MAC) -DVERSION=\"$(VERSION)\"
 
 # Optionals that need to be set to something (all others may be empty).
+
+# If $(COMPILER_32_BIT) is not set, set it to $(COMPILER_HOST).
+ifeq ($(strip $(COMPILER_HOST_32_BIT)),)
+	COMPILER_HOST_32_BIT := $(COMPILER_HOST)
+endif
 
 # If $(COMPILER_MAC) is not set, set it to $(COMPILER_HOST).
 ifeq ($(strip $(COMPILER_MAC)),)
@@ -49,6 +54,11 @@ ifeq ($(strip $(COMPILER_FLAGS_WINDOWS_X86_64)),)
 	COMPILER_FLAGS_WINDOWS_X86_64 := $(COMPILER_FLAGS_HOST)
 else
 	COMPILER_FLAGS_WINDOWS_X86_64 := $(COMPILER_FLAGS_HOST) -DVERSION=\"$(VERSION)\"
+endif
+
+# If $(STRIP_HOST_32_BIT) is not set, set it to $(STRIP_HOST).
+ifeq ($(strip $(STRIP_HOST_32_BIT)),)
+	STRIP_HOST_32_BIT := $(STRIP_HOST)
 endif
 
 # If $(STRIP_MAC) is not set, set it to $(STRIP_HOST).
@@ -142,12 +152,12 @@ ifeq ($(strip $(VERSION)),)
 	$(error Error: The $$VERSION variable is not set in variables.mk but is required)
 endif
 
-ifeq ($(strip $(RELEASE_NAME_SUFFIX_LINUX_I386)),)
-	$(error Error: The $$RELEASE_NAME_SUFFIX_LINUX_I386 variable is not set in variables.mk but is required)
+ifeq ($(strip $(RELEASE_NAME_SUFFIX_HOST_32)),)
+	$(error Error: The $$RELEASE_NAME_SUFFIX_HOST_32 variable is not set in variables.mk but is required)
 endif
 
-ifeq ($(strip $(RELEASE_NAME_SUFFIX_LINUX_X86_64)),)
-	$(error Error: The $$RELEASE_NAME_SUFFIX_LINUX_X86_64 variable is not set in variables.mk but is required)
+ifeq ($(strip $(RELEASE_NAME_SUFFIX_HOST)),)
+	$(error Error: The $$RELEASE_NAME_SUFFIX_HOST variable is not set in variables.mk but is required)
 endif
 
 ifeq ($(strip $(RELEASE_NAME_SUFFIX_WINDOWS_I686)),)
@@ -206,8 +216,8 @@ ifeq ($(strip $(COMPILER_FLAGS_HOST)),)
 	$(error Error: The $$COMPILER_FLAGS variable is not set in variables.mk but is required)
 endif
 
-ifeq ($(strip $(COMPILER_FLAGS_LINUX_I386)),)
-	$(error Error: The $$COMPILER_FLAGS_LINUX_I386 variable is not set in variables.mk but is required)
+ifeq ($(strip $(COMPILER_FLAGS_HOST_32_BIT)),)
+	$(error Error: The $$COMPILER_FLAGS_HOST_32_BIT variable is not set in variables.mk but is required)
 endif
 
 # Check strip.
@@ -250,16 +260,21 @@ endif
 		$(COMPILER_MAC_LEGACY) $(COMPILER_FLAGS_MAC_LEGACY) $(SOURCE_FILES) $(LDFLAGS_MAC_LEGACY) -o $(BUILD_DIR)/$(EXECUTABLE_NAME); \
 		echo "$(STRIP_MAC_LEGACY) $(BUILD_DIR)/$(EXECUTABLE_NAME)"; \
 		$(STRIP_MAC_LEGACY) $(BUILD_DIR)/$(EXECUTABLE_NAME); \
-	elif [ "$(COMPILER)" == "$(COMPILER_WINDOWS_I686)" ]; then \
+	elif [ "$(COMPILER)" = "$(COMPILER_WINDOWS_I686)" ]; then \
 		echo "$(COMPILER_WINDOWS_I686) $(COMPILER_FLAGS_WINDOWS_I686) $(SOURCE_FILES) $(LDFLAGS_WINDOWS_I686) -o $(BUILD_DIR)/$(EXECUTABLE_NAME)"; \
 		$(COMPILER_WINDOWS_I686) $(COMPILER_FLAGS_WINDOWS_I686) $(SOURCE_FILES) $(LDFLAGS_WINDOWS_I686) -o $(BUILD_DIR)/$(EXECUTABLE_NAME); \
 		echo "$(STRIP_WINDOWS_I686) $(BUILD_DIR)/$(EXECUTABLE_NAME)"; \
 		$(STRIP_WINDOWS_I686) $(BUILD_DIR)/$(EXECUTABLE_NAME); \
-	elif [ "$(COMPILER)" == "$(COMPILER_WINDOWS_X86_64)" ]; then \
+	elif [ "$(COMPILER)" = "$(COMPILER_WINDOWS_X86_64)" ]; then \
 		echo "$(COMPILER_WINDOWS_X86_64) $(COMPILER_FLAGS_WINDOWS_X86_64) $(SOURCE_FILES) $(LDFLAGS_WINDOWS_X86_64) -o $(BUILD_DIR)/$(EXECUTABLE_NAME)"; \
 		$(COMPILER_WINDOWS_X86_64) $(COMPILER_FLAGS_WINDOWS_X86_64) $(SOURCE_FILES) $(LDFLAGS_WINDOWS_X86_64) -o $(BUILD_DIR)/$(EXECUTABLE_NAME); \
 		echo "$(STRIP_WINDOWS_X86_64) $(BUILD_DIR)/$(EXECUTABLE_NAME)"; \
 		$(STRIP_WINDOWS_X86_64) $(BUILD_DIR)/$(EXECUTABLE_NAME); \
+	elif [ "$(32_BIT_BUILD)" = "TRUE" ]; then \
+		echo "$(COMPILER_HOST_32_BIT) "$(COMPILER_FLAGS_HOST_32_BIT)" $(SOURCE_FILES) "$(LDFLAGS_HOST_32_BIT)" -o $(BUILD_DIR)/$(EXECUTABLE_NAME)"; \
+		$(COMPILER_HOST_32_BIT) $(COMPILER_FLAGS_HOST_32_BIT) $(SOURCE_FILES) $(LDFLAGS_HOST_32_BIT) -o $(BUILD_DIR)/$(EXECUTABLE_NAME); \
+		echo "$(STRIP_HOST_32_BIT) $(BUILD_DIR)/$(EXECUTABLE_NAME)"; \
+		$(STRIP_HOST_32_BIT) $(BUILD_DIR)/$(EXECUTABLE_NAME); \
 	else \
 		echo "$(COMPILER_HOST) "$(COMPILER_FLAGS_HOST)" $(SOURCE_FILES) "$(LDFLAGS_HOST)" -o $(BUILD_DIR)/$(EXECUTABLE_NAME)"; \
 		$(COMPILER_HOST) $(COMPILER_FLAGS_HOST) $(SOURCE_FILES) $(LDFLAGS_HOST) -o $(BUILD_DIR)/$(EXECUTABLE_NAME); \
@@ -299,12 +314,12 @@ clean:
 clean-build:
 	rm -rf $(BUILD_DIR)
 
-.PHONY: linux-i386
-linux-i386: clean
-	make $(PROGRAM) COMPILER_FLAGS='$(COMPILER_FLAGS_LINUX_I386) $(COMPILER_FLAGS_HOST)' COMPILER_FLAGS_LIB='$(COMPILER_FLAGS_LINUX_I386) $(COMPILER_FLAGS_LIB)' EXECUTABLE_NAME='$(PROGRAM).i386'
+.PHONY: host-32
+host-32: clean
+	make $(PROGRAM) 32_BIT_BUILD=TRUE EXECUTABLE_NAME='$(PROGRAM).i386'
 
-.PHONY: linux-x86_64
-linux-x86_64: clean
+.PHONY: host-64
+host-64: clean
 	make $(PROGRAM) EXECUTABLE_NAME='$(PROGRAM).x86_64'
 
 .PHONY: windows-i686
@@ -338,13 +353,13 @@ endif
 	cd $(BUILD_DIR) && zip -rq $(RELEASE_BASE_NAME)-$(VERSION)-$(PLATFORM).zip $(RELEASE_BASE_NAME)-$(VERSION)-$(PLATFORM)
 	rm -rf $(BUILD_DIR)/$(RELEASE_BASE_NAME)-$(VERSION)-$(PLATFORM)
 
-.PHONY: linux-i386-release
-linux-i386-release: linux-i386
-	make release PLATFORM='$(RELEASE_NAME_SUFFIX_LINUX_I386)' EXECUTABLE_NAME='$(PROGRAM).i386'
+.PHONY: host-32-release
+host-32-release: host-32
+	make release PLATFORM='$(RELEASE_NAME_SUFFIX_HOST_32)' EXECUTABLE_NAME='$(PROGRAM).i386'
 
-.PHONY: linux-x86_64-release
-linux-x86_64-release: linux-x86_64
-	make release PLATFORM='$(RELEASE_NAME_SUFFIX_LINUX_X86_64)' EXECUTABLE_NAME='$(PROGRAM).x86_64'
+.PHONY: host-64-release
+host-64-release: host-64
+	make release PLATFORM='$(RELEASE_NAME_SUFFIX_HOST)' EXECUTABLE_NAME='$(PROGRAM).x86_64'
 
 .PHONY: windows-i686-release
 windows-i686-release: windows-i686
@@ -362,30 +377,30 @@ else
 	make release PLATFORM='$(RELEASE_NAME_SUFFIX_MAC_OS)' EXECUTABLE_NAME='$(PROGRAM).$(shell uname -m)'
 endif
 
-.PHONY: linux-i386-deb
-linux-i386-deb: linux-i386
-	rm -rf $(BUILD_DIR)/$(RELEASE_BASE_NAME)-$(VERSION)-$(RELEASE_NAME_SUFFIX_LINUX_I386)
-	mkdir -p $(BUILD_DIR)/$(RELEASE_BASE_NAME)-$(VERSION)-$(RELEASE_NAME_SUFFIX_LINUX_I386)/usr/bin
-	mkdir -p $(BUILD_DIR)/$(RELEASE_BASE_NAME)-$(VERSION)-$(RELEASE_NAME_SUFFIX_LINUX_I386)/DEBIAN
+.PHONY: host-32-deb
+host-32-deb: host-32
+	rm -rf $(BUILD_DIR)/$(RELEASE_BASE_NAME)-$(VERSION)-$(RELEASE_NAME_SUFFIX_HOST_32)
+	mkdir -p $(BUILD_DIR)/$(RELEASE_BASE_NAME)-$(VERSION)-$(RELEASE_NAME_SUFFIX_HOST_32)/usr/bin
+	mkdir -p $(BUILD_DIR)/$(RELEASE_BASE_NAME)-$(VERSION)-$(RELEASE_NAME_SUFFIX_HOST_32)/DEBIAN
 	cp $(BUILD_DIR)/$(EXECUTABLE_NAME) $(BUILD_DIR)/$(PROGRAM)
-	cp $(BUILD_DIR)/$(PROGRAM) $(BUILD_DIR)/$(RELEASE_BASE_NAME)-$(VERSION)-$(RELEASE_NAME_SUFFIX_LINUX_I386)/usr/bin
-	cp control-i386 $(BUILD_DIR)/$(RELEASE_BASE_NAME)-$(VERSION)-$(RELEASE_NAME_SUFFIX_LINUX_I386)/DEBIAN/control
-	dpkg-deb --build $(BUILD_DIR)/$(RELEASE_BASE_NAME)-$(VERSION)-$(RELEASE_NAME_SUFFIX_LINUX_I386)
-	rm -rf $(BUILD_DIR)/$(RELEASE_BASE_NAME)-$(VERSION)-$(RELEASE_NAME_SUFFIX_LINUX_I386)
+	cp $(BUILD_DIR)/$(PROGRAM) $(BUILD_DIR)/$(RELEASE_BASE_NAME)-$(VERSION)-$(RELEASE_NAME_SUFFIX_HOST_32)/usr/bin
+	cp control-i386 $(BUILD_DIR)/$(RELEASE_BASE_NAME)-$(VERSION)-$(RELEASE_NAME_SUFFIX_HOST_32)/DEBIAN/control
+	dpkg-deb --build $(BUILD_DIR)/$(RELEASE_BASE_NAME)-$(VERSION)-$(RELEASE_NAME_SUFFIX_HOST_32)
+	rm -rf $(BUILD_DIR)/$(RELEASE_BASE_NAME)-$(VERSION)-$(RELEASE_NAME_SUFFIX_HOST_32)
 
-.PHONY: linux-x86_64-deb
-linux-x86_64-deb: linux-x86_64
-	rm -rf $(BUILD_DIR)/$(RELEASE_BASE_NAME)-$(VERSION)-$(RELEASE_NAME_SUFFIX_LINUX_X86_64)
-	mkdir -p $(BUILD_DIR)/$(RELEASE_BASE_NAME)-$(VERSION)-$(RELEASE_NAME_SUFFIX_LINUX_X86_64)/usr/bin
-	mkdir -p $(BUILD_DIR)/$(RELEASE_BASE_NAME)-$(VERSION)-$(RELEASE_NAME_SUFFIX_LINUX_X86_64)/DEBIAN
+.PHONY: host-64-deb
+host-64-deb: host-64
+	rm -rf $(BUILD_DIR)/$(RELEASE_BASE_NAME)-$(VERSION)-$(RELEASE_NAME_SUFFIX_HOST)
+	mkdir -p $(BUILD_DIR)/$(RELEASE_BASE_NAME)-$(VERSION)-$(RELEASE_NAME_SUFFIX_HOST)/usr/bin
+	mkdir -p $(BUILD_DIR)/$(RELEASE_BASE_NAME)-$(VERSION)-$(RELEASE_NAME_SUFFIX_HOST)/DEBIAN
 	cp $(BUILD_DIR)/$(EXECUTABLE_NAME) $(BUILD_DIR)/$(PROGRAM)
-	cp $(BUILD_DIR)/$(PROGRAM) $(BUILD_DIR)/$(RELEASE_BASE_NAME)-$(VERSION)-$(RELEASE_NAME_SUFFIX_LINUX_X86_64)/usr/bin
-	cp control-x86_64 $(BUILD_DIR)/$(RELEASE_BASE_NAME)-$(VERSION)-$(RELEASE_NAME_SUFFIX_LINUX_X86_64)/DEBIAN/control
-	dpkg-deb --build $(BUILD_DIR)/$(RELEASE_BASE_NAME)-$(VERSION)-$(RELEASE_NAME_SUFFIX_LINUX_X86_64)
-	rm -rf $(BUILD_DIR)/$(RELEASE_BASE_NAME)-$(VERSION)-$(RELEASE_NAME_SUFFIX_LINUX_X86_64)
+	cp $(BUILD_DIR)/$(PROGRAM) $(BUILD_DIR)/$(RELEASE_BASE_NAME)-$(VERSION)-$(RELEASE_NAME_SUFFIX_HOST)/usr/bin
+	cp control-x86_64 $(BUILD_DIR)/$(RELEASE_BASE_NAME)-$(VERSION)-$(RELEASE_NAME_SUFFIX_HOST)/DEBIAN/control
+	dpkg-deb --build $(BUILD_DIR)/$(RELEASE_BASE_NAME)-$(VERSION)-$(RELEASE_NAME_SUFFIX_HOST)
+	rm -rf $(BUILD_DIR)/$(RELEASE_BASE_NAME)-$(VERSION)-$(RELEASE_NAME_SUFFIX_HOST)
 
-.PHONY: linux-i386-rpm
-linux-i386-rpm: linux-i386
+.PHONY: host-32-rpm
+host-32-rpm: host-32
 	rm -rf rpm-tmp
 	mkdir -p rpm-tmp/RPMS rpm-tmp/SPECS rpm-tmp/SOURCES rpm-tmp/BUILD
 	cp ezre.spec rpm-tmp/SPECS/ezre.spec
@@ -396,8 +411,8 @@ linux-i386-rpm: linux-i386
 	mv rpm-tmp/RPMS/i386/*.rpm build/
 	rm -rf rpm-tmp
 
-.PHONY: linux-x86_64-rpm
-linux-x86_64-rpm: linux-x86_64
+.PHONY: host-64-rpm
+host-64-rpm: host-64
 	rm -rf rpm-tmp
 	mkdir -p rpm-tmp/RPMS rpm-tmp/SPECS rpm-tmp/SOURCES rpm-tmp/BUILD
 	cp ezre.spec rpm-tmp/SPECS/ezre.spec
@@ -411,12 +426,12 @@ all:
 	make clean-build
 	
 	@if [ "$(shell uname)" = "Linux" ]; then \
-		make linux-i386-release; \
-		make linux-i386-deb EXECUTABLE_NAME='$(PROGRAM).i386'; \
-		make linux-i386-rpm EXECUTABLE_NAME='$(PROGRAM).i386'; \
-		make linux-x86_64-release; \
-		make linux-x86_64-deb EXECUTABLE_NAME='$(PROGRAM).x86_64'; \
-		make linux-x86_64-rpm EXECUTABLE_NAME='$(PROGRAM).x86_64'; \
+		make host-32-release; \
+		make host-32-deb EXECUTABLE_NAME='$(PROGRAM).i386'; \
+		make host-32-rpm EXECUTABLE_NAME='$(PROGRAM).i386'; \
+		make host-64-release; \
+		make host-64-deb EXECUTABLE_NAME='$(PROGRAM).x86_64'; \
+		make host-64-rpm EXECUTABLE_NAME='$(PROGRAM).x86_64'; \
 	elif [ "$(shell uname)" = "Darwin" ]; then \
 		make mac-os-release; \
 	fi

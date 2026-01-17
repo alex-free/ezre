@@ -3,7 +3,7 @@
 script_dir=$(dirname "$0")
 ezre_files=""$script_dir"/template-files"
 answered_yes=false
-version=1.1.3
+version=1.1.4
 
 echo -e "EzRe v"$version"\n(C) 2023-2025, Alex Free (3-BSD)\n"
 
@@ -153,6 +153,7 @@ if [ -e "variables.mk" ]; then
         sed -i '' -E "s|^COMPILER_WINDOWS_X86_64=.*|COMPILER_WINDOWS_X86_64=$COMPILER_WINDOWS_X86_64|" variables.mk
 
         sed -i '' -E "s|^COMPILER_FLAGS_HOST=.*|COMPILER_FLAGS_HOST=$COMPILER_FLAGS_HOST|" variables.mk
+        sed -i '' -E "s|^COMPILER_FLAGS_HOST_32_BIT=.*|COMPILER_FLAGS_HOST_32_BIT=$COMPILER_FLAGS_HOST_32_BIT|" variables.mk
         sed -i '' -E "s|^COMPILER_FLAGS_MAC=.*|COMPILER_FLAGS_MAC=$COMPILER_FLAGS_MAC|" variables.mk
         sed -i '' -E "s|^COMPILER_FLAGS_MAC_LEGACY=.*|COMPILER_FLAGS_MAC_LEGACY=$COMPILER_FLAGS_MAC_LEGACY|" variables.mk
         sed -i '' -E "s|^COMPILER_FLAGS_WINDOWS_I686=.*|COMPILER_FLAGS_WINDOWS_I686=$COMPILER_FLAGS_WINDOWS_I686|" variables.mk
@@ -234,6 +235,7 @@ if [ -e "variables.mk" ]; then
         sed -i'' -E "s|^COMPILER_WINDOWS_X86_64=.*|COMPILER_WINDOWS_X86_64=$COMPILER_WINDOWS_X86_64|" variables.mk
 
         sed -i'' -E "s|^COMPILER_FLAGS_HOST=.*|COMPILER_FLAGS_HOST=$COMPILER_FLAGS_HOST|" variables.mk
+        sed -i'' -E "s|^COMPILER_FLAGS_HOST_32_BIT=.*|COMPILER_FLAGS_HOST_32_BIT=$COMPILER_FLAGS_HOST_32_BIT|" variables.mk
         sed -i'' -E "s|^COMPILER_FLAGS_MAC=.*|COMPILER_FLAGS_MAC=$COMPILER_FLAGS_MAC|" variables.mk
         sed -i'' -E "s|^COMPILER_FLAGS_MAC_LEGACY=.*|COMPILER_FLAGS_MAC_LEGACY=$COMPILER_FLAGS_MAC_LEGACY|" variables.mk
         sed -i'' -E "s|^COMPILER_FLAGS_WINDOWS_I686=.*|COMPILER_FLAGS_WINDOWS_I686=$COMPILER_FLAGS_WINDOWS_I686|" variables.mk

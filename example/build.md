@@ -21,17 +21,17 @@ This software is built with the [EZRE](https://github.com/alex-free/ezre) build 
 
 `make mac-os-release LEGACY=TRUE` - generate a portable Mac OS release .zip file (same as above can apply alternative values for i.e. PowerPC and or older Mac OS versions).
 
-`make linux-i386-release` - generate a portable Linux i386 release .zip file for kernel version 3.2.0 and newer.
+`make host-32-release` - generate a portable Linux i386 release .zip file for kernel version 3.2.0 and newer.
 
-`make linux-i386-deb` - generate a Linux i386 release deb file for kernel version 3.2.0 and newer.
+`make host-32-deb` - generate a Linux i386 release deb file for kernel version 3.2.0 and newer.
 
-`make linux-i386-rpm` - generate a Linux i386 release rpm file for kernel version 3.2.0 and newer.
+`make host-32-rpm` - generate a Linux i386 release rpm file for kernel version 3.2.0 and newer.
 
-`make linux-x86_64-release` - generate a portable Linux x86_64 release .zip file for kernel version 3.2.0 and newer.
+`make host-64-release` - generate a portable Linux x86_64 release .zip file for kernel version 3.2.0 and newer.
 
-`make linux-x86_64-deb` - generate a Linux x86_64 release deb file for kernel version 3.2.0 and newer.
+`make host-64-deb` - generate a Linux x86_64 release deb file for kernel version 3.2.0 and newer.
 
-`make linux-x86_64-rpm` - generate a Linux x86_64 release rpm file for kernel version 3.2.0 and newer.
+`make host-64-rpm` - generate a Linux x86_64 release rpm file for kernel version 3.2.0 and newer.
 
 `make clean-build` - deletes the generated build directory in it's entirety, and therefore, all builds generated.
 
